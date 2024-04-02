@@ -2,10 +2,12 @@ package rw.auca.radinfotracker.model.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rw.auca.radinfotracker.model.enums.ERole;
 
 @Getter
 @Setter
@@ -27,4 +29,7 @@ public class RegisterUserDTO {
 
     @NotBlank
     private String password;
+
+    @NotNull
+    private ERole role;
 }

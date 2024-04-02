@@ -1,5 +1,6 @@
 package rw.auca.radinfotracker.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +11,7 @@ import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -61,6 +63,10 @@ public class UserAccount {
     @Column
     @Enumerated(EnumType.STRING)
     private ELoginStatus loginStatus = ELoginStatus.INACTIVE;
+
+    @Column(name="last_login")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastLogin;
 
     @JsonIgnore
     @Transient
