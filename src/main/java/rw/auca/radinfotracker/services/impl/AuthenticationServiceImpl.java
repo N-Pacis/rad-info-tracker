@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final IUserAccountAuditRepository userAccountAuditRepository;
 
     @Override
-    public LoginResponseDTO signIn(LoginRequest request, HttpServletRequest httpRequest) {
+    public LoginResponseDTO signIn(LoginRequest request, String userAgent, String deviceType) {
 
         UserAccount user = null;
         request.setLogin(request.getLogin().trim());
@@ -67,7 +67,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
 
-            saveLoginHistory(user, httpRequest);
+            saveLoginHistory(user, userAgent, deviceType);
 
             user.setLastLogin(LocalDateTime.now(ZoneId.of("Africa/Kigali")));
             userRepository.save(user);
@@ -97,10 +97,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         userRepository.save(userAccount);
     }
 
-    public void saveLoginHistory(UserAccount userAccount, HttpServletRequest request){
-        String userAgent = request.getHeader("User-Agent");
-        String deviceType = request.getHeader("Device-Type");
-
+    public void saveLoginHistory(UserAccount userAccount, String userAgent, String deviceType){
         UserAccountLoginHistory userAccountLoginHistory = new UserAccountLoginHistory(userAgent, deviceType, userAccount);;
         userAccountLoginHistoryRepository.save(userAccountLoginHistory);
     }

@@ -30,7 +30,7 @@ public class PatientController extends BaseController{
     private final IPatientService patientService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @GetMapping(value = "/")
+    @GetMapping
     public ResponseEntity<ApiResponse<Page<Patient>>> searchAll(
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(value = "q",required = false,defaultValue = "") String query,

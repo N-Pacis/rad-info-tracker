@@ -26,8 +26,10 @@ public class AuthenticationController extends BaseController {
 
     @PostMapping("/signin")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> signin(
-            @RequestBody LoginRequest request, HttpServletRequest httpRequest) throws ResourceNotFoundException {
-        return ResponseEntity.ok(new ApiResponse<>(authenticationService.signIn(request, httpRequest), localize("responses.getEntitySuccess"), HttpStatus.OK));
+            @RequestBody LoginRequest request,
+            @RequestHeader(value = "User-Agent", required = false) String userAgent,
+            @RequestHeader(value = "Device-Type", required = false) String deviceType) throws ResourceNotFoundException {
+        return ResponseEntity.ok(new ApiResponse<>(authenticationService.signIn(request, userAgent, deviceType), localize("responses.getEntitySuccess"), HttpStatus.OK));
     }
 
     @PutMapping(path="/updatePassword")

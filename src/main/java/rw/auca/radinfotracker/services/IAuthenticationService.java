@@ -12,7 +12,7 @@ import rw.auca.radinfotracker.security.dtos.LoginResponseDTO;
 
 public interface IAuthenticationService {
 
-    LoginResponseDTO signIn(LoginRequest request, HttpServletRequest httpRequest) throws ResourceNotFoundException;
+    LoginResponseDTO signIn(LoginRequest request, String userAgent, String deviceType) throws ResourceNotFoundException;
 
     void signOut() throws ResourceNotFoundException;
 
