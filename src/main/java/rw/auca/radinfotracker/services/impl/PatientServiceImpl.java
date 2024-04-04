@@ -8,7 +8,6 @@ import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.Patient;
 import rw.auca.radinfotracker.model.PatientAudit;
-import rw.auca.radinfotracker.model.UserAccountAudit;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EAuditType;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
@@ -20,6 +19,7 @@ import rw.auca.radinfotracker.services.IPatientService;
 import rw.auca.radinfotracker.utils.RandomUtil;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -103,5 +103,12 @@ public class PatientServiceImpl implements IPatientService {
         this.patientAuditRepository.save(audit);
 
         return patient;
+    }
+
+    @Override
+    public List<PatientAudit> getAuditByPatient(UUID id) throws ResourceNotFoundException {
+        Patient patient = getById(id);
+
+        return patientAuditRepository.findAllByPatient(patient);
     }
 }

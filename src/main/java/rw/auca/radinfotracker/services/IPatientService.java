@@ -5,9 +5,11 @@ import org.springframework.data.domain.Pageable;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.Patient;
+import rw.auca.radinfotracker.model.PatientAudit;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IPatientService {
@@ -21,4 +23,6 @@ public interface IPatientService {
     Patient deactivate(UUID id) throws ResourceNotFoundException, BadRequestException;
 
     Patient activate(UUID id) throws ResourceNotFoundException, BadRequestException;
+
+    List<PatientAudit> getAuditByPatient(UUID id) throws ResourceNotFoundException;
 }

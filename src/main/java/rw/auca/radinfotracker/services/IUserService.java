@@ -6,11 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.UserAccount;
+import rw.auca.radinfotracker.model.UserAccountAudit;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.dtos.SetPasswordDTO;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IUserService {
@@ -28,4 +30,6 @@ public interface IUserService {
 
     @Transactional
     UserAccount resetPassword(UUID id, SetPasswordDTO passwordDTO) throws ResourceNotFoundException, BadRequestException;
+
+    List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException;
 }

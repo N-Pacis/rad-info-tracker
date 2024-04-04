@@ -10,7 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
+import rw.auca.radinfotracker.model.PatientAudit;
 import rw.auca.radinfotracker.model.UserAccount;
+import rw.auca.radinfotracker.model.UserAccountAudit;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.dtos.SetPasswordDTO;
 import rw.auca.radinfotracker.model.enums.ERole;
@@ -20,6 +22,7 @@ import rw.auca.radinfotracker.utils.ApiResponse;
 import rw.auca.radinfotracker.utils.Constants;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -72,6 +75,17 @@ public class UserController extends BaseController{
     public ResponseEntity<ApiResponse<UserAccount>> resetPassword(@PathVariable(value = "id") UUID id, @Valid @RequestBody SetPasswordDTO dto) throws ResourceNotFoundException, BadRequestException {
         UserAccount userAccount = this.userService.resetPassword(id, dto);
         return ResponseEntity.ok(new ApiResponse<>(userAccount, localize("responses.updateEntitySuccess"), HttpStatus.OK));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(value = "/{id}/audits")
+    public ResponseEntity<ApiResponse<List<UserAccountAudit>>> getUserAudit(
+            @PathVariable(value = "id") UUID id
+    ) throws ResourceNotFoundException {
+        List<UserAccountAudit> userAudits = this.userService.getAuditByUser(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(userAudits, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
     }
 
     @Override

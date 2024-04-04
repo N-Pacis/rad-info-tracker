@@ -25,6 +25,7 @@ import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IAuthenticationService;
 import rw.auca.radinfotracker.services.IUserService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -161,5 +162,12 @@ public class UserServiceImpl implements IUserService {
         }else{
             throw new BadRequestException("exceptions.badRequest.userNot.pending.orActive");
         }
+    }
+
+    @Override
+    public List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException {
+        UserAccount user = getById(id);
+
+        return userAccountAuditRepository.findAllByUserAccount(user);
     }
 }

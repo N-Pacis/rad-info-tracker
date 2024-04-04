@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.Patient;
+import rw.auca.radinfotracker.model.PatientAudit;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
 import rw.auca.radinfotracker.services.IPatientService;
@@ -19,6 +20,7 @@ import rw.auca.radinfotracker.utils.ApiResponse;
 import rw.auca.radinfotracker.utils.Constants;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -42,6 +44,17 @@ public class PatientController extends BaseController{
         Page<Patient> patients = this.patientService.getAll(query, status, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(patients, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping(value = "/{id}/audits")
+    public ResponseEntity<ApiResponse<List<PatientAudit>>> getPatientAudit(
+            @PathVariable(value = "id") UUID id
+    ) throws ResourceNotFoundException {
+        List<PatientAudit> patientAudits = this.patientService.getAuditByPatient(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(patientAudits, localize("responses.getListSuccess"), HttpStatus.OK)
         );
     }
 
