@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             user = userRepository.findByEmail(request.getLogin()).orElseThrow(InvalidCredentialsException::new);
 
             if(user.getStatus().equals(EUserStatus.INACTIVE))
-                throw new InvalidCredentialsException("exceptions.accountLocked");
+                throw new InvalidCredentialsException("exceptions.badRequest.accountLocked");
 
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
