@@ -11,12 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.UserAccount;
+import rw.auca.radinfotracker.model.UserAccountAudit;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.dtos.SetPasswordDTO;
+import rw.auca.radinfotracker.model.enums.EAuditType;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
 import rw.auca.radinfotracker.model.enums.ErrorCode;
+import rw.auca.radinfotracker.repository.IUserAccountAuditRepository;
 import rw.auca.radinfotracker.repository.IUserRepository;
+import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
+import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IAuthenticationService;
 import rw.auca.radinfotracker.services.IUserService;
 
@@ -30,12 +35,18 @@ public class UserServiceImpl implements IUserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final IJwtService jwtService;
+
     private final IAuthenticationService authenticationService;
 
-    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, @Lazy IAuthenticationService authenticationService) {
+    private final IUserAccountAuditRepository userAccountAuditRepository;
+
+    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, IJwtService jwtService, @Lazy IAuthenticationService authenticationService, IUserAccountAuditRepository userAccountAuditRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.userAccountAuditRepository = userAccountAuditRepository;
     }
 
 
@@ -83,6 +94,10 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         this.userRepository.save(user);
 
+        CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.CREATE, userDTO.getId(), userDTO.getFullNames(), "New user created", null);
+        this.userAccountAuditRepository.save(audit);
+
         return user;
     }
 
@@ -96,6 +111,10 @@ public class UserServiceImpl implements IUserService {
         user.setStatus(EUserStatus.ACTIVE);
         authenticationService.invalidateUserLogin(user);
 
+        CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.APPROVE, userDTO.getId(), userDTO.getFullNames(), "User Activated", null);
+        this.userAccountAuditRepository.save(audit);
+
         return this.userRepository.save(user);
     }
 
@@ -108,6 +127,10 @@ public class UserServiceImpl implements IUserService {
 
         user.setStatus(EUserStatus.INACTIVE);
         authenticationService.invalidateUserLogin(user);
+
+        CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.DISABLE, userDTO.getId(), userDTO.getFullNames(), "User Deactivated", null);
+        this.userAccountAuditRepository.save(audit);
 
         return this.userRepository.save(user);
     }
@@ -129,6 +152,10 @@ public class UserServiceImpl implements IUserService {
             userAccount = this.userRepository.save(userAccount);
 
             authenticationService.invalidateUserLogin(userAccount);
+
+            CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+            UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), "Password reset", null);
+            this.userAccountAuditRepository.save(audit);
 
             return userAccount;
         }else{

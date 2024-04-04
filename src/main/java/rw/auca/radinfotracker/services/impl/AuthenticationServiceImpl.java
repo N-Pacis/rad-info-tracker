@@ -14,16 +14,16 @@ import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.InvalidCredentialsException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.UserAccount;
+import rw.auca.radinfotracker.model.UserAccountAudit;
 import rw.auca.radinfotracker.model.UserAccountLoginHistory;
 import rw.auca.radinfotracker.model.dtos.UpdatePasswordDTO;
+import rw.auca.radinfotracker.model.enums.EAuditType;
 import rw.auca.radinfotracker.model.enums.ELoginStatus;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
+import rw.auca.radinfotracker.repository.IUserAccountAuditRepository;
 import rw.auca.radinfotracker.repository.IUserAccountLoginHistoryRepository;
 import rw.auca.radinfotracker.repository.IUserRepository;
-import rw.auca.radinfotracker.security.dtos.JwtAuthenticationResponse;
-import rw.auca.radinfotracker.security.dtos.LoginRequest;
-import rw.auca.radinfotracker.security.dtos.LoginResponseDTO;
-import rw.auca.radinfotracker.security.dtos.UserDetailsImpl;
+import rw.auca.radinfotracker.security.dtos.*;
 import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IAuthenticationService;
 import rw.auca.radinfotracker.services.IUserService;
@@ -47,6 +47,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     private final IUserAccountLoginHistoryRepository userAccountLoginHistoryRepository;
+
+    private final IUserAccountAuditRepository userAccountAuditRepository;
 
     @Override
     public LoginResponseDTO signIn(LoginRequest request, HttpServletRequest httpRequest) {
@@ -114,6 +116,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         userAccount.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         this.userRepository.save(userAccount);
+
+        CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+        UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), "Password updated", null);
+        this.userAccountAuditRepository.save(audit);
 
         return userAccount;
     }
