@@ -34,7 +34,9 @@ public abstract class AuditDetail<T> {
 
     private UUID operatorId;
 
-    private String operationNames;
+    private String operatorNames;
+
+    private String operatorEmail;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp

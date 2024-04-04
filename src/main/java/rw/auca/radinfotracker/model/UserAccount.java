@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import rw.auca.radinfotracker.audits.TimestampAudit;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.enums.ELoginStatus;
 import rw.auca.radinfotracker.model.enums.ERole;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 @Builder
-public class UserAccount {
+public class UserAccount extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

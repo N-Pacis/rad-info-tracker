@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import rw.auca.radinfotracker.audits.AuditDetail;
+import rw.auca.radinfotracker.model.embeddables.PatientEmbeddable;
 import rw.auca.radinfotracker.model.embeddables.UserEmbeddable;
 import rw.auca.radinfotracker.model.enums.EAuditType;
 
@@ -19,36 +20,36 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Entity
-public class UserAccountAudit extends AuditDetail<UserEmbeddable> {
+public class PatientAudit extends AuditDetail<PatientEmbeddable> {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name="id")
-    @GeneratedValue(generator = "UserAuditUUID")
-    @GenericGenerator(name="UserAuditUUID", strategy="org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(generator = "PatientAuditUUID")
+    @GenericGenerator(name="PatientAuditUUID", strategy="org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "patient_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private UserAccount userAccount;
+    private Patient patient;
 
 
-    public UserAccountAudit(
-            UserAccount userAccount, EAuditType auditType,
+    public PatientAudit(
+            Patient patient, EAuditType auditType,
             UUID operatorId, String operatorNames, String operatorEmail,
             String observation, File supportingDocument
     ) {
-        this.userAccount = userAccount;
-        this.setSnapshot(new UserEmbeddable(userAccount));
+        this.patient = patient;
+        this.setSnapshot(new PatientEmbeddable(patient));
         this.setAuditType(auditType);
         this.setOperatorId(operatorId);
         this.setOperatorNames(operatorNames);
-        this.setOperatorEmail(operatorEmail);
-        this.setObservation(observation);
+        this.setOperatorEmail(operatorNames);
+        this.setObservation(operatorEmail);
         this.setSupportingDocument(supportingDocument);
     }
 }

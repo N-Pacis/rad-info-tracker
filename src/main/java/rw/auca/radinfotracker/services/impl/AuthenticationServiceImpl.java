@@ -118,7 +118,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         this.userRepository.save(userAccount);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
-        UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), "Password updated", null);
+        UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "Password updated", null);
         this.userAccountAuditRepository.save(audit);
 
         return userAccount;

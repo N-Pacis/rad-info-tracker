@@ -95,7 +95,7 @@ public class UserServiceImpl implements IUserService {
         this.userRepository.save(user);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
-        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.CREATE, userDTO.getId(), userDTO.getFullNames(), "New user created", null);
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.CREATE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "New user created", null);
         this.userAccountAuditRepository.save(audit);
 
         return user;
@@ -112,7 +112,7 @@ public class UserServiceImpl implements IUserService {
         authenticationService.invalidateUserLogin(user);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
-        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.APPROVE, userDTO.getId(), userDTO.getFullNames(), "User Activated", null);
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.APPROVE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "User Activated", null);
         this.userAccountAuditRepository.save(audit);
 
         return this.userRepository.save(user);
@@ -129,7 +129,7 @@ public class UserServiceImpl implements IUserService {
         authenticationService.invalidateUserLogin(user);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
-        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.DISABLE, userDTO.getId(), userDTO.getFullNames(), "User Deactivated", null);
+        UserAccountAudit audit = new UserAccountAudit(user, EAuditType.DISABLE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "User Deactivated", null);
         this.userAccountAuditRepository.save(audit);
 
         return this.userRepository.save(user);
@@ -154,7 +154,7 @@ public class UserServiceImpl implements IUserService {
             authenticationService.invalidateUserLogin(userAccount);
 
             CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
-            UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), "Password reset", null);
+            UserAccountAudit audit = new UserAccountAudit(userAccount, EAuditType.UPDATE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress() ,"Password reset", null);
             this.userAccountAuditRepository.save(audit);
 
             return userAccount;
