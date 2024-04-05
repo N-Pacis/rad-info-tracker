@@ -5,15 +5,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
-import rw.auca.radinfotracker.model.Patient;
-import rw.auca.radinfotracker.model.PatientAppointment;
-import rw.auca.radinfotracker.model.PatientAppointmentAudit;
-import rw.auca.radinfotracker.model.UserAccount;
+import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.dtos.NewPatientAppointmentDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
+import rw.auca.radinfotracker.model.enums.EAuditType;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.repository.IPatientAppointmentAuditRepository;
 import rw.auca.radinfotracker.repository.IPatientAppointmentRepository;
+import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
+import rw.auca.radinfotracker.security.service.IJwtService;
+import rw.auca.radinfotracker.services.IInsuranceService;
 import rw.auca.radinfotracker.services.IPatientAppointmentService;
 import rw.auca.radinfotracker.services.IPatientService;
 import rw.auca.radinfotracker.services.IUserService;
@@ -34,11 +35,17 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
     private final IPatientService patientService;
 
-    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService) {
+    private final IJwtService jwtService;
+
+    private final IInsuranceService insuranceService;
+
+    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService, IJwtService jwtService, IInsuranceService insuranceService) {
         this.patientAppointmentRepository = patientAppointmentRepository;
         this.patientAppointmentAuditRepository = patientAppointmentAuditRepository;
         this.userService = userService;
         this.patientService = patientService;
+        this.jwtService = jwtService;
+        this.insuranceService = insuranceService;
     }
 
     @Override
@@ -51,6 +58,8 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         UserAccount technician = userService.getById(dto.getTechnicianId());
         if(technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
 
+        Insurance insurance = insuranceService.getById(dto.getInsuranceId());
+
         if(LocalDate.now().isAfter(dto.getDate())) throw new BadRequestException("exceptions.badRequest.appointment.invalidDate");
 
         String refNumber = "APT-" + RandomUtil.randomNumber();
@@ -59,9 +68,14 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
             refNumber = "APT-" + RandomUtil.randomNumber();
         }
 
-        PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, radiologist, technician);
+        PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, insurance, radiologist, technician);
+        patientAppointment = patientAppointmentRepository.save(patientAppointment);
 
-        return patientAppointmentRepository.save(patientAppointment);
+        CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
+        PatientAppointmentAudit audit = new PatientAppointmentAudit(patientAppointment, EAuditType.CREATE, userDTO.getId(), userDTO.getFullNames(), userDTO.getEmailAddress(), "Patient Appointment created", null);
+        this.patientAppointmentAuditRepository.save(audit);
+
+        return patientAppointment;
     }
 
     @Override

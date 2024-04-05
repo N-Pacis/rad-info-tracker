@@ -43,6 +43,11 @@ public class PatientAppointment extends TimestampAudit {
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "insurance_id", referencedColumnName = "id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Insurance insurance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "radiologist_user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount radiologist;
@@ -52,10 +57,11 @@ public class PatientAppointment extends TimestampAudit {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount technician;
 
-    public PatientAppointment(String refNumber, LocalDate date, Patient patient, UserAccount radiologist, UserAccount technician){
+    public PatientAppointment(String refNumber, LocalDate date, Patient patient, Insurance insurance, UserAccount radiologist, UserAccount technician){
         this.refNumber = refNumber;
         this.date = date;
         this.patient = patient;
+        this.insurance = insurance;
         this.radiologist = radiologist;
         this.technician = technician;
     }
