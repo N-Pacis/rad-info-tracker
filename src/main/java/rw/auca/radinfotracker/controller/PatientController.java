@@ -63,7 +63,6 @@ public class PatientController extends BaseController{
     public ResponseEntity<ApiResponse<Patient>> register(@Valid @RequestBody NewPatientDTO dto) throws BadRequestException {
         Patient patient = this.patientService.register(dto);
         return ResponseEntity.ok(new ApiResponse<>(patient,localize("responses.saveEntitySuccess"), HttpStatus.CREATED));
-
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
