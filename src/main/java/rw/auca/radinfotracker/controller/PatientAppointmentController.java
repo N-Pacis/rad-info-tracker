@@ -1,6 +1,7 @@
 package rw.auca.radinfotracker.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,10 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
-import rw.auca.radinfotracker.model.Patient;
-import rw.auca.radinfotracker.model.PatientAppointment;
-import rw.auca.radinfotracker.model.PatientAppointmentAudit;
-import rw.auca.radinfotracker.model.PatientAudit;
+import rw.auca.radinfotracker.model.*;
+import rw.auca.radinfotracker.model.dtos.CancelOrFinalizeAppointmentDTO;
+import rw.auca.radinfotracker.model.dtos.NewAppointmentImageDTO;
 import rw.auca.radinfotracker.model.dtos.NewPatientAppointmentDTO;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
@@ -25,6 +25,7 @@ import rw.auca.radinfotracker.utils.ApiResponse;
 import rw.auca.radinfotracker.utils.Constants;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -80,6 +81,64 @@ public class PatientAppointmentController extends BaseController{
         List<PatientAppointmentAudit> patientAudits = this.patientAppointmentService.getAppointmentAudits(id);
         return ResponseEntity.ok(
                 new ApiResponse<>(patientAudits, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PutMapping(value = "/{id}/cancel")
+    public ResponseEntity<ApiResponse<PatientAppointment>> cancelAppointment(
+            @PathVariable(value = "id") UUID id,
+            @Valid @RequestBody CancelOrFinalizeAppointmentDTO dto
+            ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = this.patientAppointmentService.cancelAppointment(id, dto.getFinalRemarks());
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('RADIOLOGIST')")
+    @PutMapping(value = "/{id}/markAsAttended")
+    public ResponseEntity<ApiResponse<PatientAppointment>> markAppointmentAsAttended(
+            @PathVariable(value = "id") UUID id,
+            @Valid @RequestBody CancelOrFinalizeAppointmentDTO dto
+    ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsAttended(id, dto.getFinalRemarks());
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('TECHNICIAN')")
+    @PutMapping(value = "/{id}/checkIn")
+    public ResponseEntity<ApiResponse<PatientAppointment>> checkInPatientAppointment(
+            @PathVariable(value = "id") UUID id
+    ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = this.patientAppointmentService.checkInAppointment(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('TECHNICIAN')")
+    @PutMapping(value = "/{id}/addImage")
+    public ResponseEntity<ApiResponse<PatientAppointmentImage>> addImageToAppointment(
+            @PathVariable(value = "id") UUID id,
+            @Valid @RequestBody NewAppointmentImageDTO dto
+            ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointmentImage image = this.patientAppointmentService.addImage(id, dto.getImageId(), dto.getRemarks());
+        return ResponseEntity.ok(
+                new ApiResponse<>(image, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('TECHNICIAN')")
+    @DeleteMapping(value = "/{imageId}/removeImage")
+    public ResponseEntity<ApiResponse<?>> removeImageFromAppointment(
+            @PathVariable(value = "imageId") UUID imageId
+    ) throws IOException, ResourceNotFoundException {
+        this.patientAppointmentService.removeImage(imageId);
+        return ResponseEntity.ok(
+                new ApiResponse<>(localize("responses.updateEntitySuccess"), HttpStatus.OK)
         );
     }
 

@@ -1,5 +1,5 @@
 package rw.auca.radinfotracker.model.enums;
 
 public enum EAppointmentStatus {
-    PENDING, ATTENDED, CANCELLED
+    PENDING, ATTENDED, QUALITY_CHECKED, CONSULTED, CANCELLED
 }

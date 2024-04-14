@@ -12,6 +12,7 @@ import rw.auca.radinfotracker.model.enums.EPatientStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -56,6 +57,12 @@ public class PatientAppointment extends TimestampAudit {
     @JoinColumn(name = "technician_user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount technician;
+
+    @Column
+    private String finalRemarks;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<PatientAppointmentImage> images;
 
     public PatientAppointment(String refNumber, LocalDate date, Patient patient, Insurance insurance, UserAccount radiologist, UserAccount technician){
         this.refNumber = refNumber;

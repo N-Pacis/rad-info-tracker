@@ -11,15 +11,14 @@ import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
 import rw.auca.radinfotracker.model.enums.EAuditType;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.repository.IPatientAppointmentAuditRepository;
+import rw.auca.radinfotracker.repository.IPatientAppointmentImageRepository;
 import rw.auca.radinfotracker.repository.IPatientAppointmentRepository;
 import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
 import rw.auca.radinfotracker.security.service.IJwtService;
-import rw.auca.radinfotracker.services.IInsuranceService;
-import rw.auca.radinfotracker.services.IPatientAppointmentService;
-import rw.auca.radinfotracker.services.IPatientService;
-import rw.auca.radinfotracker.services.IUserService;
+import rw.auca.radinfotracker.services.*;
 import rw.auca.radinfotracker.utils.RandomUtil;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -39,13 +38,19 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
     private final IInsuranceService insuranceService;
 
-    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService, IJwtService jwtService, IInsuranceService insuranceService) {
+    private final FileService fileService;
+
+    private final IPatientAppointmentImageRepository patientAppointmentImageRepository;
+
+    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService, IJwtService jwtService, IInsuranceService insuranceService, FileService fileService, IPatientAppointmentImageRepository patientAppointmentImageRepository) {
         this.patientAppointmentRepository = patientAppointmentRepository;
         this.patientAppointmentAuditRepository = patientAppointmentAuditRepository;
         this.userService = userService;
         this.patientService = patientService;
         this.jwtService = jwtService;
         this.insuranceService = insuranceService;
+        this.fileService = fileService;
+        this.patientAppointmentImageRepository = patientAppointmentImageRepository;
     }
 
     @Override
@@ -94,9 +99,9 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         UserAccount user = userService.getLoggedInUser();
 
         if(user.getRole().equals(ERole.RADIOLOGIST)){
-            return patientAppointmentRepository.findAllByDateAndRadiologist(date, user, pageable);
+            return patientAppointmentRepository.findAllByDateAndRadiologistAndStatus(date, user, EAppointmentStatus.QUALITY_CHECKED, pageable);
         }
-        return patientAppointmentRepository.findAllByDateAndTechnician(date, user, pageable);
+        return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.PENDING, pageable);
     }
 
     @Override
@@ -108,5 +113,64 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     public List<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId) throws ResourceNotFoundException {
         PatientAppointment appointment = getById(patientAppointmentId);
         return patientAppointmentAuditRepository.findAllByPatientAppointment(appointment);
+    }
+
+    @Override
+    public PatientAppointmentImage addImage(UUID appointmentId, UUID imageId, String remarks) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(appointment.getStatus().equals(EAppointmentStatus.ATTENDED))
+            throw new BadRequestException("exceptions.badRequest.appointment.notAttended");
+
+        File image = fileService.findById(imageId);
+
+        PatientAppointmentImage appointmentImage = new PatientAppointmentImage(image, remarks, appointment);
+        return patientAppointmentImageRepository.save(appointmentImage);
+    }
+
+    private PatientAppointmentImage getPatientAppointmentImageById(UUID appointmentImageId) throws ResourceNotFoundException {
+        return patientAppointmentImageRepository.findById(appointmentImageId).orElseThrow(()->new ResourceNotFoundException("exceptions.notFound.appointment.image"));
+    }
+
+     @Override
+    public void removeImage(UUID appointmentImageId) throws ResourceNotFoundException, IOException {
+        PatientAppointmentImage appointmentImage = getPatientAppointmentImageById(appointmentImageId);
+
+        patientAppointmentImageRepository.delete(appointmentImage);
+        fileService.deleteById(appointmentImage.getImage().getId());
+    }
+
+    @Override
+    public PatientAppointment checkInAppointment(UUID appointmentId) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(patientAppointmentImageRepository.countAllByAppointment(appointment) < 1)
+            throw new BadRequestException("exceptions.badRequest.appointment.noImage");
+
+        appointment.setStatus(EAppointmentStatus.ATTENDED);
+
+        return patientAppointmentRepository.save(appointment);
+    }
+
+    @Override
+    public PatientAppointment markAppointmentAsAttended(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(!appointment.getStatus().equals(EAppointmentStatus.QUALITY_CHECKED))
+            throw new BadRequestException("exceptions.badRequest.appointment.noQualityChecked");
+
+        appointment.setFinalRemarks(remarks);
+        appointment.setStatus(EAppointmentStatus.CONSULTED);
+
+        return patientAppointmentRepository.save(appointment);
+    }
+
+    @Override
+    public PatientAppointment cancelAppointment(UUID appointmentId, String finalRemarks) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(!appointment.getStatus().equals(EAppointmentStatus.PENDING))
+            throw new BadRequestException("exceptions.badRequest.appointment.notPending");
+
+        appointment.setFinalRemarks(finalRemarks);
+        appointment.setStatus(EAppointmentStatus.CANCELLED);
+
+        return patientAppointmentRepository.save(appointment);
     }
 }
