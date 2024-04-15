@@ -30,5 +30,8 @@ public class NewPatientAppointmentDTO {
     private UUID insuranceId;
 
     @NotNull
+    private UUID imageTypeId;
+
+    @NotNull
     private LocalDate date;
 }

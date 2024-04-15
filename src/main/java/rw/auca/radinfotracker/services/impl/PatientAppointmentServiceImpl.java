@@ -42,7 +42,9 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
     private final IPatientAppointmentImageRepository patientAppointmentImageRepository;
 
-    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService, IJwtService jwtService, IInsuranceService insuranceService, FileService fileService, IPatientAppointmentImageRepository patientAppointmentImageRepository) {
+    private final IImageTypeService imageTypeService;
+
+    public PatientAppointmentServiceImpl(IPatientAppointmentRepository patientAppointmentRepository, IPatientAppointmentAuditRepository patientAppointmentAuditRepository, IUserService userService, IPatientService patientService, IJwtService jwtService, IInsuranceService insuranceService, FileService fileService, IPatientAppointmentImageRepository patientAppointmentImageRepository, IImageTypeService imageTypeService) {
         this.patientAppointmentRepository = patientAppointmentRepository;
         this.patientAppointmentAuditRepository = patientAppointmentAuditRepository;
         this.userService = userService;
@@ -51,6 +53,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         this.insuranceService = insuranceService;
         this.fileService = fileService;
         this.patientAppointmentImageRepository = patientAppointmentImageRepository;
+        this.imageTypeService = imageTypeService;
     }
 
     @Override
@@ -65,6 +68,8 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
         Insurance insurance = insuranceService.getById(dto.getInsuranceId());
 
+        ImageType imageType = imageTypeService.getById(dto.getImageTypeId());
+
         if(LocalDate.now().isAfter(dto.getDate())) throw new BadRequestException("exceptions.badRequest.appointment.invalidDate");
 
         String refNumber = "APT-" + RandomUtil.randomNumber();
@@ -73,7 +78,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
             refNumber = "APT-" + RandomUtil.randomNumber();
         }
 
-        PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, insurance, radiologist, technician);
+        PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, insurance, imageType,radiologist, technician);
         patientAppointment = patientAppointmentRepository.save(patientAppointment);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();

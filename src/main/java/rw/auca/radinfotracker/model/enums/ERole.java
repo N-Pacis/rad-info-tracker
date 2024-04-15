@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ERole {
     ADMIN("ADMIN"),
     TECHNICIAN("TECHNICIAN"),
-    RADIOLOGIST("RADIOLOGIST");
+    RADIOLOGIST("RADIOLOGIST"),
+    FRONT_DESK("FRONT_DESK");
 
     private String value;
 

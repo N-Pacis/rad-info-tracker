@@ -49,6 +49,11 @@ public class PatientAppointment extends TimestampAudit {
     private Insurance insurance;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_type_id", referencedColumnName = "id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ImageType imageType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "radiologist_user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount radiologist;
@@ -64,11 +69,12 @@ public class PatientAppointment extends TimestampAudit {
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<PatientAppointmentImage> images;
 
-    public PatientAppointment(String refNumber, LocalDate date, Patient patient, Insurance insurance, UserAccount radiologist, UserAccount technician){
+    public PatientAppointment(String refNumber, LocalDate date, Patient patient, Insurance insurance, ImageType imageType, UserAccount radiologist, UserAccount technician){
         this.refNumber = refNumber;
         this.date = date;
         this.patient = patient;
         this.insurance = insurance;
+        this.imageType = imageType;
         this.radiologist = radiologist;
         this.technician = technician;
     }

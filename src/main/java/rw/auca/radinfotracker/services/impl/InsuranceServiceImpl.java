@@ -23,7 +23,7 @@ public class InsuranceServiceImpl implements IInsuranceService {
 
     @Override
     public Insurance register(NewInsuranceDTO dto) throws BadRequestException {
-        if(insuranceRepository.findByNameIgnoreCase(dto.getName()).isPresent()) throw new BadRequestException("exceptions.badRequest.insurance.nameExists");
+        if(insuranceRepository.findByNameIgnoreCase(dto.getName()).isPresent()) throw new BadRequestException("exceptions.badRequest.imageType.nameExists");
         Insurance insurance = new Insurance(dto.getName());
         return insuranceRepository.save(insurance);
     }

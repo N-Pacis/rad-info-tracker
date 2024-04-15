@@ -88,6 +88,7 @@ public class UserAccount extends TimestampAudit {
         this.phoneNumber = dto.getPhoneNumber();
         this.email = dto.getEmail();
         this.password = dto.getPassword();
+        this.role = dto.getRole();
     }
 
     public String getFullName() {

@@ -36,7 +36,7 @@ import java.util.UUID;
 public class PatientAppointmentController extends BaseController{
     private final IPatientAppointmentService patientAppointmentService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @GetMapping("/byDate/{date}")
     public ResponseEntity<ApiResponse<Page<PatientAppointment>>> searchAll(
             @PathVariable(value = "date") LocalDate date,
@@ -84,7 +84,7 @@ public class PatientAppointmentController extends BaseController{
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @PutMapping(value = "/{id}/cancel")
     public ResponseEntity<ApiResponse<PatientAppointment>> cancelAppointment(
             @PathVariable(value = "id") UUID id,
@@ -142,7 +142,7 @@ public class PatientAppointmentController extends BaseController{
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<PatientAppointment>> create(@Valid @RequestBody NewPatientAppointmentDTO dto) throws BadRequestException, ResourceNotFoundException {
         PatientAppointment appointment = this.patientAppointmentService.create(dto);

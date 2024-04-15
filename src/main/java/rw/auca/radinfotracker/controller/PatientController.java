@@ -29,7 +29,7 @@ import java.util.UUID;
 public class PatientController extends BaseController{
     private final IPatientService patientService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Patient>>> searchAll(
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
@@ -58,21 +58,21 @@ public class PatientController extends BaseController{
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Patient>> register(@Valid @RequestBody NewPatientDTO dto) throws BadRequestException {
         Patient patient = this.patientService.register(dto);
         return ResponseEntity.ok(new ApiResponse<>(patient,localize("responses.saveEntitySuccess"), HttpStatus.CREATED));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @PutMapping(path="/{id}/activate")
     public ResponseEntity<ApiResponse<Patient>> approveById(@PathVariable(value = "id") UUID id) throws ResourceNotFoundException, BadRequestException {
         Patient patient = this.patientService.activate(id);
         return ResponseEntity.ok(new ApiResponse<>(patient, localize("responses.updateEntitySuccess"), HttpStatus.OK));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @PutMapping(path="/{id}/deactivate")
     public ResponseEntity<ApiResponse<Patient>> deactivateById(@PathVariable(value = "id") UUID id) throws ResourceNotFoundException, BadRequestException, BadRequestException {
         Patient patient = this.patientService.deactivate(id);
