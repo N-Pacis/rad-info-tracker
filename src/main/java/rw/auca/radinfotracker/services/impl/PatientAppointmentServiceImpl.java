@@ -123,8 +123,8 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     @Override
     public PatientAppointmentImage addImage(UUID appointmentId, UUID imageId, String remarks) throws ResourceNotFoundException, BadRequestException {
         PatientAppointment appointment = getById(appointmentId);
-        if(appointment.getStatus().equals(EAppointmentStatus.ATTENDED))
-            throw new BadRequestException("exceptions.badRequest.appointment.notAttended");
+        if(appointment.getStatus().equals(EAppointmentStatus.PENDING))
+            throw new BadRequestException("exceptions.badRequest.appointment.notPending");
 
         File image = fileService.findById(imageId);
 
@@ -156,13 +156,24 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     }
 
     @Override
-    public PatientAppointment markAppointmentAsAttended(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException {
+    public PatientAppointment markAppointmentAsConsulted(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException {
         PatientAppointment appointment = getById(appointmentId);
         if(!appointment.getStatus().equals(EAppointmentStatus.QUALITY_CHECKED))
             throw new BadRequestException("exceptions.badRequest.appointment.noQualityChecked");
 
         appointment.setFinalRemarks(remarks);
         appointment.setStatus(EAppointmentStatus.CONSULTED);
+
+        return patientAppointmentRepository.save(appointment);
+    }
+
+    @Override
+    public PatientAppointment markAppointmentAsQualityChecked(UUID appointmentId) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(!appointment.getStatus().equals(EAppointmentStatus.ATTENDED))
+            throw new BadRequestException("exceptions.badRequest.appointment.notAttended");
+
+        appointment.setStatus(EAppointmentStatus.QUALITY_CHECKED);
 
         return patientAppointmentRepository.save(appointment);
     }

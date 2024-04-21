@@ -7,6 +7,7 @@ public enum ERole {
     ADMIN("ADMIN"),
     TECHNICIAN("TECHNICIAN"),
     RADIOLOGIST("RADIOLOGIST"),
+    QUALITY_ASSURANCE("QUALITY_ASSURANCE"),
     FRONT_DESK("FRONT_DESK");
 
     private String value;

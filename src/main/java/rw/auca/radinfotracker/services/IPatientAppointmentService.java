@@ -33,7 +33,9 @@ public interface IPatientAppointmentService {
 
      PatientAppointment checkInAppointment(UUID appointmentId) throws ResourceNotFoundException, BadRequestException;
 
-     PatientAppointment markAppointmentAsAttended(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException;
+     PatientAppointment markAppointmentAsConsulted(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException;
 
-     PatientAppointment cancelAppointment(UUID appointmentId, String finalRemarks) throws ResourceNotFoundException, BadRequestException;
+    PatientAppointment markAppointmentAsQualityChecked(UUID appointmentId) throws ResourceNotFoundException, BadRequestException;
+
+    PatientAppointment cancelAppointment(UUID appointmentId, String finalRemarks) throws ResourceNotFoundException, BadRequestException;
 }

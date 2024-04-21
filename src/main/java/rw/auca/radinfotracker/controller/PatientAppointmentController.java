@@ -97,12 +97,23 @@ public class PatientAppointmentController extends BaseController{
     }
 
     @PreAuthorize("hasAnyAuthority('RADIOLOGIST')")
-    @PutMapping(value = "/{id}/markAsAttended")
-    public ResponseEntity<ApiResponse<PatientAppointment>> markAppointmentAsAttended(
+    @PutMapping(value = "/{id}/markAsConsulted")
+    public ResponseEntity<ApiResponse<PatientAppointment>> markAppointmentAsConsulted(
             @PathVariable(value = "id") UUID id,
             @Valid @RequestBody CancelOrFinalizeAppointmentDTO dto
     ) throws ResourceNotFoundException, BadRequestException {
-        PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsAttended(id, dto.getFinalRemarks());
+        PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsConsulted(id, dto.getFinalRemarks());
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('QUALITY_ASSURANCE')")
+    @PutMapping(value = "/{id}/markAsQualityChecked")
+    public ResponseEntity<ApiResponse<PatientAppointment>> markAppointmentAsQualityChecked(
+            @PathVariable(value = "id") UUID id
+    ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsQualityChecked(id);
         return ResponseEntity.ok(
                 new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
         );
