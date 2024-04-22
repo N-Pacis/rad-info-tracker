@@ -58,7 +58,7 @@ public class PatientAppointmentController extends BaseController{
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('TECHNICIAN','RADIOLOGIST')")
+    @PreAuthorize("hasAnyAuthority('TECHNICIAN','RADIOLOGIST','QUALITY_ASSURANCE','FINANCE','FRONT_DESK')")
     @GetMapping("/myAppointments/{date}")
     public ResponseEntity<ApiResponse<Page<PatientAppointment>>> getMyAppointments(
             @PathVariable(value = "date") LocalDate date,

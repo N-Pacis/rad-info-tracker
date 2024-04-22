@@ -108,7 +108,16 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         if(user.getRole().equals(ERole.RADIOLOGIST)){
             return patientAppointmentRepository.findAllByDateAndRadiologistAndStatus(date, user, EAppointmentStatus.QUALITY_CHECKED, pageable);
         }
-        return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.PENDING, pageable);
+        else if(user.getRole().equals(ERole.TECHNICIAN)){
+            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.PENDING, pageable);
+        }
+        else if(user.getRole().equals(ERole.QUALITY_ASSURANCE)){
+            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.ATTENDED, pageable);
+        }
+        else if(user.getRole().equals(ERole.FINANCE)){
+            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.CONSULTED, pageable);
+        }
+        return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, null, pageable);
     }
 
     @Override
