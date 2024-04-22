@@ -79,6 +79,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         }
 
         PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, insurance, imageType,radiologist, technician);
+        patientAppointment.setAmountToPay(imageType.getTotalCost() * insurance.getRate());
         patientAppointment = patientAppointmentRepository.save(patientAppointment);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();

@@ -27,7 +27,7 @@ public class ImageTypeServiceImpl implements IImageTypeService {
     @Override
     public ImageType register(NewImageTypeDTO dto) throws BadRequestException {
         if(imageTypeRepository.findByNameIgnoreCase(dto.getName()).isPresent()) throw new BadRequestException("exceptions.badRequest.imageType.nameExists");
-        ImageType imageType = new ImageType(dto.getName());
+        ImageType imageType = new ImageType(dto);
         return imageTypeRepository.save(imageType);
     }
 

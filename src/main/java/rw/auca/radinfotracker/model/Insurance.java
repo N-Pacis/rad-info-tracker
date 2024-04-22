@@ -3,6 +3,7 @@ package rw.auca.radinfotracker.model;
 import jakarta.persistence.*;
 import lombok.*;
 import rw.auca.radinfotracker.audits.TimestampAudit;
+import rw.auca.radinfotracker.model.dtos.NewInsuranceDTO;
 import rw.auca.radinfotracker.model.enums.EInsuranceStatus;
 
 import java.time.LocalDate;
@@ -24,12 +25,16 @@ public class Insurance extends TimestampAudit {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Column(name = "rate", nullable = false, unique = true)
+    private Double rate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
     private EInsuranceStatus status = EInsuranceStatus.ACTIVE;
 
-    public Insurance(String name){
-        this.name = name;
+    public Insurance(NewInsuranceDTO dto){
+        this.name = dto.getName();
+        this.rate = dto.getRate();
     }
 
 }

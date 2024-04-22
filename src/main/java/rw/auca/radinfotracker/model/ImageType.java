@@ -3,6 +3,7 @@ package rw.auca.radinfotracker.model;
 import jakarta.persistence.*;
 import lombok.*;
 import rw.auca.radinfotracker.audits.TimestampAudit;
+import rw.auca.radinfotracker.model.dtos.NewImageTypeDTO;
 import rw.auca.radinfotracker.model.enums.EImageTypeStatus;
 import rw.auca.radinfotracker.model.enums.EInsuranceStatus;
 
@@ -28,8 +29,12 @@ public class ImageType extends TimestampAudit {
     @Column(name = "status",nullable = false)
     private EImageTypeStatus status = EImageTypeStatus.ACTIVE;
 
-    public ImageType(String name){
-        this.name = name;
+    @Column(nullable = false)
+    private Double totalCost;
+
+    public ImageType(NewImageTypeDTO dto){
+        this.name = dto.getName();
+        this.totalCost = dto.getTotalCost();
     }
 
 }

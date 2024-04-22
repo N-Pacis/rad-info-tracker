@@ -9,6 +9,7 @@ import rw.auca.radinfotracker.audits.TimestampAudit;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
+import rw.auca.radinfotracker.model.enums.EPaymentStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,6 +63,12 @@ public class PatientAppointment extends TimestampAudit {
     @JoinColumn(name = "technician_user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount technician;
+
+    @Column(nullable = false)
+    private Double amountToPay;
+
+    @Column(nullable = false)
+    private EPaymentStatus paymentStatus = EPaymentStatus.UNPAID;
 
     @Column
     private String finalRemarks;

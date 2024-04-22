@@ -8,6 +8,7 @@ public enum ERole {
     TECHNICIAN("TECHNICIAN"),
     RADIOLOGIST("RADIOLOGIST"),
     QUALITY_ASSURANCE("QUALITY_ASSURANCE"),
+    FINANCE("FINANCE"),
     FRONT_DESK("FRONT_DESK");
 
     private String value;
