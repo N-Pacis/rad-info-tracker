@@ -24,7 +24,7 @@ public class InsuranceServiceImpl implements IInsuranceService {
     @Override
     public Insurance register(NewInsuranceDTO dto) throws BadRequestException {
         if(insuranceRepository.findByNameIgnoreCase(dto.getName()).isPresent()) throw new BadRequestException("exceptions.badRequest.insurance.nameExists");
-        if(dto.getRate() < 0.01 || dto.getRate() > 0.01) throw new BadRequestException("exceptions.badRequest.insurance.invalidRate");
+        if(dto.getRate() < 0.01 || dto.getRate() > 1.0) throw new BadRequestException("exceptions.badRequest.insurance.invalidRate");
 
         Insurance insurance = new Insurance(dto);
         return insuranceRepository.save(insurance);
