@@ -19,6 +19,7 @@ import rw.auca.radinfotracker.model.dtos.NewPatientAppointmentDTO;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
+import rw.auca.radinfotracker.model.enums.EPaymentStatus;
 import rw.auca.radinfotracker.services.IPatientAppointmentService;
 import rw.auca.radinfotracker.services.IPatientService;
 import rw.auca.radinfotracker.utils.ApiResponse;
@@ -42,6 +43,7 @@ public class PatientAppointmentController extends BaseController{
             @PathVariable(value = "date") LocalDate date,
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(value = "status", required = false) EAppointmentStatus status,
+            @RequestParam(value = "paymentStatus", required = false) EPaymentStatus paymentStatus,
             @RequestParam(value = "radiologist", required = false) UUID radiologist,
             @RequestParam(value = "technician", required = false) UUID technician,
             @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) throws BadRequestException, ResourceNotFoundException {
@@ -50,7 +52,7 @@ public class PatientAppointmentController extends BaseController{
 
         Pageable pageable = PageRequest.of(page - 1, limit, sort);
 
-        Page<PatientAppointment> appointments = this.patientAppointmentService.searchAllByDate(status, date, radiologist, technician, pageable);
+        Page<PatientAppointment> appointments = this.patientAppointmentService.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(appointments, localize("responses.getListSuccess"), HttpStatus.OK)
         );
@@ -114,6 +116,17 @@ public class PatientAppointmentController extends BaseController{
             @PathVariable(value = "id") UUID id
     ) throws ResourceNotFoundException, BadRequestException {
         PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsQualityChecked(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
+        );
+    }
+
+    @PreAuthorize("hasAnyAuthority('FINANCE')")
+    @PutMapping(value = "/{id}/markAsPaid")
+    public ResponseEntity<ApiResponse<PatientAppointment>> markAppointmentAsPaid(
+            @PathVariable(value = "id") UUID id
+    ) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = this.patientAppointmentService.markAppointmentAsPaid(id);
         return ResponseEntity.ok(
                 new ApiResponse<>(appointment, localize("responses.updateEntitySuccess"), HttpStatus.OK)
         );

@@ -10,6 +10,7 @@ import rw.auca.radinfotracker.model.PatientAppointmentImage;
 import rw.auca.radinfotracker.model.UserAccount;
 import rw.auca.radinfotracker.model.dtos.NewPatientAppointmentDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
+import rw.auca.radinfotracker.model.enums.EPaymentStatus;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public interface IPatientAppointmentService {
      PatientAppointment create(NewPatientAppointmentDTO dto) throws ResourceNotFoundException, BadRequestException;
 
-     Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, LocalDate date, UUID radiologist, UUID technician, Pageable pageable) throws ResourceNotFoundException, BadRequestException;
+     Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UUID radiologist, UUID technician, Pageable pageable) throws ResourceNotFoundException, BadRequestException;
 
      Page<PatientAppointment> getAllMyAppointmentsByDate(LocalDate date, Pageable pageable) throws ResourceNotFoundException;
 
@@ -36,6 +37,8 @@ public interface IPatientAppointmentService {
      PatientAppointment markAppointmentAsConsulted(UUID appointmentId, String remarks) throws ResourceNotFoundException, BadRequestException;
 
     PatientAppointment markAppointmentAsQualityChecked(UUID appointmentId) throws ResourceNotFoundException, BadRequestException;
+
+    PatientAppointment markAppointmentAsPaid(UUID appointmentId) throws ResourceNotFoundException, BadRequestException;
 
     PatientAppointment cancelAppointment(UUID appointmentId, String finalRemarks) throws ResourceNotFoundException, BadRequestException;
 }

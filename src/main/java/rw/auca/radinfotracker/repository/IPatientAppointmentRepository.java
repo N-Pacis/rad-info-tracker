@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
+import rw.auca.radinfotracker.model.enums.EPaymentStatus;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -18,10 +19,11 @@ public interface IPatientAppointmentRepository extends JpaRepository<PatientAppo
 
     @Query("SELECT pa FROM PatientAppointment pa WHERE " +
             "(:status IS NULL OR pa.status=:status) AND " +
+            "(:paymentStatus IS NULL OR pa.paymentStatus=:paymentStatus) AND " +
             "(:date IS NULL or pa.date=:date) AND" +
             "(:technician IS NULL or pa.technician=:technician) AND" +
             "(:radiologist IS NULL or pa.radiologist=:radiologist)")
-    Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, LocalDate date, UserAccount radiologist, UserAccount technician, Pageable pageable);
+    Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UserAccount radiologist, UserAccount technician, Pageable pageable);
 
     Page<PatientAppointment> findAllByDateAndTechnicianAndStatus(LocalDate date, UserAccount technician, EAppointmentStatus status, Pageable pageable);
 

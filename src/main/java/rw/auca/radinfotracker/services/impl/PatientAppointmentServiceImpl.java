@@ -9,6 +9,7 @@ import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.dtos.NewPatientAppointmentDTO;
 import rw.auca.radinfotracker.model.enums.EAppointmentStatus;
 import rw.auca.radinfotracker.model.enums.EAuditType;
+import rw.auca.radinfotracker.model.enums.EPaymentStatus;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.repository.IPatientAppointmentAuditRepository;
 import rw.auca.radinfotracker.repository.IPatientAppointmentImageRepository;
@@ -90,14 +91,14 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     }
 
     @Override
-    public Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, LocalDate date, UUID radiologistId, UUID technicianId, Pageable pageable) throws ResourceNotFoundException, BadRequestException {
+    public Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UUID radiologistId, UUID technicianId, Pageable pageable) throws ResourceNotFoundException, BadRequestException {
         UserAccount radiologist = userService.getById(radiologistId);
         if(!radiologist.getRole().equals(ERole.RADIOLOGIST)) throw new BadRequestException("exceptions.badRequest.appointment.invalidRadiologist");
 
         UserAccount technician = userService.getById(technicianId);
         if(technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
 
-        return patientAppointmentRepository.searchAllByDate(status, date, radiologist, technician, pageable);
+        return patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
     }
 
     @Override
@@ -175,6 +176,17 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
             throw new BadRequestException("exceptions.badRequest.appointment.notAttended");
 
         appointment.setStatus(EAppointmentStatus.QUALITY_CHECKED);
+
+        return patientAppointmentRepository.save(appointment);
+    }
+
+    @Override
+    public PatientAppointment markAppointmentAsPaid(UUID appointmentId) throws ResourceNotFoundException, BadRequestException {
+        PatientAppointment appointment = getById(appointmentId);
+        if(!appointment.getPaymentStatus().equals(EPaymentStatus.PAID))
+            throw new BadRequestException("exceptions.badRequest.appointment.paid");
+
+        appointment.setPaymentStatus(EPaymentStatus.PAID);
 
         return patientAppointmentRepository.save(appointment);
     }
