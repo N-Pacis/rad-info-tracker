@@ -2,7 +2,7 @@ FROM maven:3.8.4-openjdk-17-slim
 
 ENV SPRING_PROFILES_ACTIVE staging
 
-WORKDIR /app
+WORKDIR .
 
 # Copy the application source code
 COPY . .
