@@ -1,19 +1,13 @@
-FROM maven:3.8.4-openjdk-17-slim
+FROM openjdk:17
 
 ENV SPRING_PROFILES_ACTIVE staging
 
-WORKDIR .
-
-# Copy the application source code
-COPY . .
-
-# Build the application
-RUN mvn clean package -DskipTests
+WORKDIR /app
 
 RUN mkdir -p /opt/radInfoTracker/files
 RUN chmod 777 /opt/radInfoTracker/files
 
-COPY /target/radInfoTracker-0.0.1-SNAPSHOT.jar radInfoTracker-1.0.0.jar
+COPY target/radInfoTracker-0.0.1-SNAPSHOT.jar radInfoTracker-1.0.0.jar
 
 EXPOSE 8080
 
