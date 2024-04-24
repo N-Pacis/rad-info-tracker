@@ -50,8 +50,3 @@ jobs:
             rm -rf ~/app/*
             exit
           '
-          scp target/*.jar $AZURE_USER@$AZURE_HOST:~/app/app.jar
-          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST '
-            docker-compose down
-            docker-compose up -d
-          '
