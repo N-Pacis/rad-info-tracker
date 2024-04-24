@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 RUN mkdir -p /opt/radInfoTracker/files
 RUN chmod 777 /opt/radInfoTracker/files
