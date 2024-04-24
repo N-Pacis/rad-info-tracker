@@ -37,17 +37,13 @@ jobs:
         with:
           name: package
 
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.AZURE_SSH_PRIVATE_KEY }}
-
       - name: Deploy to Azure
         env:
           AZURE_HOST: ${{ secrets.AZURE_HOST }}
           AZURE_USER: ${{ secrets.AZURE_USER }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
         run: |
-          ssh $AZURE_USER@$AZURE_HOST '
+          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST '
             sudo apt-get update
             sudo apt-get install -y docker.io docker-compose
             mkdir -p ~/app
@@ -55,7 +51,7 @@ jobs:
             exit
           '
           scp target/*.jar $AZURE_USER@$AZURE_HOST:~/app/app.jar
-          ssh $AZURE_USER@$AZURE_HOST '
+          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST '
             docker-compose down
             docker-compose up -d
           '
