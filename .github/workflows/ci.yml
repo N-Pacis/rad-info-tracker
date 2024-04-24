@@ -32,15 +32,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: package
-
-      - name: Deploy to Azure
-        env:
-          AZURE_HOST: ${{ secrets.AZURE_HOST }}
-          AZURE_USER: ${{ secrets.AZURE_USER }}
-          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+      - name: Set up SSH key
         run: |
-          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST hostname
+          test -d ~/.ssh || mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.AZURE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check if directory exists on Azure
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '[ -d rad-info-tracker/ ] && cd rad-info-tracker && git pull || git clone https://github.com/N-Pacis/rad-info-tracker.git rad-info-tracker/'
+
+      - name: Install Docker and Docker Compose on Azure
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'sudo apt-get update && sudo apt-get install -y docker.io docker-compose'
+
+      - name: Run Docker Compose Command
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'cd rad-info-tracker && chmod 600 .env && sudo docker-compose up -d'
