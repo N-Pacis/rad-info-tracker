@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ staging ]
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compile the app
+        run: mvn clean package -DskipTests
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: target/*.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: package
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.AZURE_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Azure
+        env:
+          AZURE_HOST: ${{ secrets.AZURE_HOST }}
+          AZURE_USER: ${{ secrets.AZURE_USER }}
+        run: |
+          ssh $AZURE_USER@$AZURE_HOST '
+            sudo apt-get update
+            sudo apt-get install -y docker.io docker-compose
+            mkdir -p ~/app
+            rm -rf ~/app/*
+            exit
+          '
+          scp target/*.jar $AZURE_USER@$AZURE_HOST:~/app/app.jar
+          ssh $AZURE_USER@$AZURE_HOST '
+            docker-compose down
+            docker-compose up -d
+          '
