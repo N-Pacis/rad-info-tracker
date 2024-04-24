@@ -43,4 +43,4 @@ jobs:
           AZURE_USER: ${{ secrets.AZURE_USER }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
         run: |
-          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST
+          sshpass -p $AZURE_PASSWORD ssh $AZURE_USER@$AZURE_HOST hostname
