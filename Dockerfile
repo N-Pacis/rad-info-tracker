@@ -1,19 +1,8 @@
-FROM openjdk:17
+FROM maven:3.8.4-openjdk-17-slim
 
 ENV SPRING_PROFILES_ACTIVE staging
 
 WORKDIR /app
-
-# Install Maven
-RUN apt-get update && \
-    apt-get install -y maven && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy the Maven configuration
-COPY pom.xml .
-
-# Fetch the dependencies
-RUN mvn dependency:go-offline
 
 # Copy the application source code
 COPY . .
