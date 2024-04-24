@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches: [ staging ]
-  workflow_dispatch:
 
 jobs:
 
@@ -31,7 +30,6 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Download artifact
