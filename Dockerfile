@@ -11,7 +11,7 @@ RUN mvn clean package -DskipTests
 RUN mkdir -p /opt/radInfoTracker/files
 RUN chmod 777 /opt/radInfoTracker/files
 
-COPY /target/radInfoTracker-0.0.1-SNAPSHOT.jar radInfoTracker-1.0.0.jar
+COPY target/radInfoTracker-0.0.1-SNAPSHOT.jar radInfoTracker-1.0.0.jar
 
 EXPOSE 8080
 
