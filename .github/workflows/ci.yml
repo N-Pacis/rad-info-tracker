@@ -34,10 +34,13 @@ jobs:
             sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose
           '
 
+      - name: Set env variables
+        run: |
+          ssh -i ~/.ssh/radtracker_key.pem ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'export DB_NAME=heueh '
+
       - name: Run Docker Compose Command
         run: |
           ssh -i ~/.ssh/radtracker_key.pem ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '
-            export DB_NAME='huie' && \
             export DB_USERNAME=${{ secrets.DB_USERNAME }} && \
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && \
             export DB_PORT=${{ secrets.DB_PORT }} && \
