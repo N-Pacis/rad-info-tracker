@@ -15,7 +15,7 @@ jobs:
           test -d ~/.ssh || mkdir -p ~/.ssh
           test -e ~/.ssh/radtracker_key.pem || touch ~/.ssh/radtracker_key.pem
           echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/radtracker_key.pem
-          chmod 400 ~/.ssh/rad_info_tracker.pem
+          chmod 400 ~/.ssh/radtracker_key.pem
           test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.AZURE_HOST }} >> ~/.ssh/known_hosts
 
