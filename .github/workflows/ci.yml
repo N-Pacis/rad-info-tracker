@@ -13,19 +13,19 @@ jobs:
       - name: Set up SSH key
         run: |
           test -d ~/.ssh || mkdir -p ~/.ssh
-          echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/radtracker_key.pem
+          chmod 400 ~/.ssh/rad_info_tracker.pem
           test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.AZURE_HOST }} >> ~/.ssh/known_hosts
 
       - name: Check if directory exists on the server
         run: |
-          ssh -i ~/.ssh/id_rsa {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '[ -d rad-info-tracker/ ] && cd rad-info-tracker && git pull || git clone https://github.com/N-Pacis/rad-info-tracker.git rad-info-tracker/'
+          ssh -i ~/.ssh/radtracker_key.pem  {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '[ -d rad-info-tracker/ ] && cd rad-info-tracker && git pull || git clone https://github.com/N-Pacis/rad-info-tracker.git rad-info-tracker/'
 
       - name: Install Docker and Docker Compose on the server
         run: |
-          ssh -i ~/.ssh/id_rsa {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'sudo apt-get update && sudo apt-get install -y docker.io docker-compose'
+          ssh -i ~/.ssh/radtracker_key.pem {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'sudo apt-get update && sudo apt-get install -y docker.io docker-compose'
 
       - name: Run Docker Compose Command
         run: |
-          ssh -i ~/.ssh/id_rsa {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'cd rad-info-tracker && sudo docker-compose up -d'
+          ssh -i ~/.ssh/radtracker_key.pem {{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'cd rad-info-tracker && sudo docker-compose up -d'
