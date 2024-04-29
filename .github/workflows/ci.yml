@@ -21,7 +21,7 @@ jobs:
 
       - name: Check if directory exists on the server
         run: |
-          ssh -i ~/.ssh/radtracker_key.pem  ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '[ -d rad-info-tracker/ ] && cd rad-info-tracker && git pull || git clone https://github.com/N-Pacis/rad-info-tracker.git rad-info-tracker/'
+          ssh -i ~/.ssh/radtracker_key.pem  ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} '[ -d rad-info-tracker/ ] && cd rad-info-tracker && git pull || git clone https://github.com/N-Pacis/rad-info-tracker.git rad-info-tracker/ && git checkout origin/staging'
 
       - name: Install Docker and Docker Compose on the server
         run: |
