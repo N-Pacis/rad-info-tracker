@@ -13,6 +13,7 @@ jobs:
       - name: Set up SSH key
         run: |
           test -d ~/.ssh || mkdir -p ~/.ssh
+          test -e ~/.ssh/radtracker_key.pem || touch ~/.ssh/radtracker_key.pem
           echo "${{ secrets.AZURE_SSH_KEY }}" > ~/.ssh/radtracker_key.pem
           chmod 400 ~/.ssh/rad_info_tracker.pem
           test -e ~/.ssh/known_hosts || touch ~/.ssh/known_hosts
