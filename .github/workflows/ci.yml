@@ -1,4 +1,4 @@
-name: RCI
+name: CI/CD
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - staging
 
 jobs:
-
   deploy:
     runs-on: ubuntu-latest
 
