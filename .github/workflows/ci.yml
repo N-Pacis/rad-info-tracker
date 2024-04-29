@@ -36,7 +36,8 @@ jobs:
 
       - name: Set env variables
         run: |
-          ssh -i ~/.ssh/radtracker_key.pem ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'export DB_NAME=heueh '
+          ssh -i ~/.ssh/radtracker_key.pem ${{ secrets.AZURE_USER }}@${{ secrets.AZURE_HOST }} 'bash -l -c "export DB_NAME=heueh"'
+    
 
       - name: Run Docker Compose Command
         run: |
