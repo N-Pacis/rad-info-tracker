@@ -73,6 +73,18 @@ public class UserAccount extends TimestampAudit {
     @Transient
     private Collection<GrantedAuthority> authorities;
 
+    public UserAccount(UUID id, String firstName, String lastName, String email, String phoneNumber, ERole role, EUserStatus status, ELoginStatus loginStatus, String password) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.role = role;
+        this.password = password;
+        this.status = status;
+        this.loginStatus = loginStatus;
+    }
+
     public UserAccount(String firstName, String lastName, String email, String phoneNumber, ERole role, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -90,6 +102,8 @@ public class UserAccount extends TimestampAudit {
         this.password = dto.getPassword();
         this.role = dto.getRole();
     }
+
+
 
     public String getFullName() {
         return this.getFirstName()+" "+this.getLastName();

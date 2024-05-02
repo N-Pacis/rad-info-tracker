@@ -48,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		final String requestUri = request.getRequestURI();
 		final String authHeader = request.getHeader("Authorization");
+
+		System.out.println("Authorization header "+authHeader);
 		final String jwt;
 
 		if (Arrays.stream(SecurityConfig.AUTH_WHITELIST).anyMatch(pattern -> PATH_MATCHER.match(pattern, requestUri))) {
@@ -60,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		jwt = authHeader.substring(7);
+		jwt = authHeader.replace("Bearer ", "").trim();
 		String userEmail = jwtService.extractUserName(jwt);
 
 		if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {

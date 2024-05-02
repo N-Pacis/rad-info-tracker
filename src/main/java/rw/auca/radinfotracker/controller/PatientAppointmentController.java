@@ -77,10 +77,16 @@ public class PatientAppointmentController extends BaseController{
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/{id}/audits")
-    public ResponseEntity<ApiResponse<List<PatientAppointmentAudit>>> getPatientAppointmentAudits(
-            @PathVariable(value = "id") UUID id
+    public ResponseEntity<ApiResponse<Page<PatientAppointmentAudit>>> getPatientAppointmentAudits(
+            @PathVariable(value = "id") UUID id,
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit
     ) throws ResourceNotFoundException, BadRequestException {
-        List<PatientAppointmentAudit> patientAudits = this.patientAppointmentService.getAppointmentAudits(id);
+        Sort sort = Sort.by(Sort.Direction.ASC, "doneAt");
+
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+
+        Page<PatientAppointmentAudit> patientAudits = this.patientAppointmentService.getAppointmentAudits(id, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(patientAudits, localize("responses.getListSuccess"), HttpStatus.OK)
         );

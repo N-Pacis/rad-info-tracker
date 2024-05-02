@@ -49,10 +49,16 @@ public class PatientController extends BaseController{
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/{id}/audits")
-    public ResponseEntity<ApiResponse<List<PatientAudit>>> getPatientAudit(
-            @PathVariable(value = "id") UUID id
+    public ResponseEntity<ApiResponse<Page<PatientAudit>>> getPatientAudit(
+            @PathVariable(value = "id") UUID id,
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit
     ) throws ResourceNotFoundException {
-        List<PatientAudit> patientAudits = this.patientService.getAuditByPatient(id);
+        Sort sort = Sort.by(Sort.Direction.DESC, "doneAt");
+
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+
+        Page<PatientAudit> patientAudits = this.patientService.getAuditByPatient(id, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(patientAudits, localize("responses.getListSuccess"), HttpStatus.OK)
         );

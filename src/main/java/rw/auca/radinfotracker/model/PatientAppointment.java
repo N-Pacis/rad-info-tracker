@@ -85,4 +85,17 @@ public class PatientAppointment extends TimestampAudit {
         this.radiologist = radiologist;
         this.technician = technician;
     }
+
+    public PatientAppointment(UUID id, String refNumber, LocalDate date, EAppointmentStatus status, Patient patient, Insurance insurance, ImageType imageType, UserAccount radiologist, UserAccount technician, Double amountToPay){
+        this.id = id;
+        this.refNumber = refNumber;
+        this.date = date;
+        this.status = status;
+        this.patient = patient;
+        this.insurance = insurance;
+        this.imageType = imageType;
+        this.radiologist = radiologist;
+        this.technician = technician;
+        this.amountToPay = amountToPay;
+    }
 }

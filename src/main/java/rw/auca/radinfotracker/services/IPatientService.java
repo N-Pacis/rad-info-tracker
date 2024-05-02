@@ -24,5 +24,5 @@ public interface IPatientService {
 
     Patient activate(UUID id) throws ResourceNotFoundException, BadRequestException;
 
-    List<PatientAudit> getAuditByPatient(UUID id) throws ResourceNotFoundException;
+    Page<PatientAudit> getAuditByPatient(UUID id, Pageable pageable) throws ResourceNotFoundException;
 }

@@ -165,9 +165,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException {
+    public Page<UserAccountAudit> getAuditByUser(UUID id, Pageable pageable) throws ResourceNotFoundException {
         UserAccount user = getById(id);
 
-        return userAccountAuditRepository.findAllByUserAccount(user);
+        return userAccountAuditRepository.findAllByUserAccount(user, pageable);
     }
 }

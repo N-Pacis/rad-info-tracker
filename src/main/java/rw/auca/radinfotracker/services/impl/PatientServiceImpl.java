@@ -106,9 +106,9 @@ public class PatientServiceImpl implements IPatientService {
     }
 
     @Override
-    public List<PatientAudit> getAuditByPatient(UUID id) throws ResourceNotFoundException {
+    public Page<PatientAudit> getAuditByPatient(UUID id, Pageable pageable) throws ResourceNotFoundException {
         Patient patient = getById(id);
 
-        return patientAuditRepository.findAllByPatient(patient);
+        return patientAuditRepository.findAllByPatient(patient, pageable);
     }
 }

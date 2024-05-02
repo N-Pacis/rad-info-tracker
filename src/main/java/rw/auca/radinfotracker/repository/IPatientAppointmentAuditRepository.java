@@ -1,5 +1,7 @@
 package rw.auca.radinfotracker.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import rw.auca.radinfotracker.model.Patient;
@@ -12,5 +14,5 @@ import java.util.UUID;
 
 @Repository
 public interface IPatientAppointmentAuditRepository extends JpaRepository<PatientAppointmentAudit, UUID> {
-    List<PatientAppointmentAudit> findAllByPatientAppointment(PatientAppointment patientAudit);
+    Page<PatientAppointmentAudit> findAllByPatientAppointment(PatientAppointment patientAudit, Pageable pageable);
 }

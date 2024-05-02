@@ -31,5 +31,5 @@ public interface IUserService {
     @Transactional
     UserAccount resetPassword(UUID id, SetPasswordDTO passwordDTO) throws ResourceNotFoundException, BadRequestException;
 
-    List<UserAccountAudit> getAuditByUser(UUID id) throws ResourceNotFoundException;
+    Page<UserAccountAudit> getAuditByUser(UUID id, Pageable pageable) throws ResourceNotFoundException;
 }

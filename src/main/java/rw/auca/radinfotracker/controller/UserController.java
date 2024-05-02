@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,10 +80,16 @@ public class UserController extends BaseController{
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @GetMapping(value = "/{id}/audits")
-    public ResponseEntity<ApiResponse<List<UserAccountAudit>>> getUserAudit(
-            @PathVariable(value = "id") UUID id
-    ) throws ResourceNotFoundException {
-        List<UserAccountAudit> userAudits = this.userService.getAuditByUser(id);
+    public ResponseEntity<ApiResponse<Page<UserAccountAudit>>> getUserAudit(
+            @PathVariable(value = "id") UUID id,
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit
+            ) throws ResourceNotFoundException {
+        Sort sort = Sort.by(Sort.Direction.DESC, "doneAt");
+
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+
+        Page<UserAccountAudit> userAudits = this.userService.getAuditByUser(id, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(userAudits, localize("responses.getListSuccess"), HttpStatus.OK)
         );

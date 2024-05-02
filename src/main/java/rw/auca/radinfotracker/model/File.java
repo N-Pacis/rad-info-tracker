@@ -47,4 +47,15 @@ public class File extends TimestampAudit {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private EFileStatus status;
+
+    public File(String name, String path, String url, int size, EFileSizeType sizeType, String type, EFileStatus status){
+        this.name = name;
+        this.path = path;
+        this.url = url;
+        this.size = size;
+        this.sizeType = sizeType;
+        this.type = type;
+        this.status = status;
+    }
+
 }

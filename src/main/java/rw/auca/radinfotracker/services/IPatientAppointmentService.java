@@ -26,7 +26,7 @@ public interface IPatientAppointmentService {
 
      PatientAppointment getById(UUID id) throws BadRequestException, ResourceNotFoundException;
 
-     List<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId) throws BadRequestException, ResourceNotFoundException;
+     Page<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId, Pageable pageable) throws BadRequestException, ResourceNotFoundException;
 
      PatientAppointmentImage addImage(UUID appointmentId, UUID imageId, String remarks) throws ResourceNotFoundException, BadRequestException;
 

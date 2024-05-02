@@ -126,9 +126,9 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     }
 
     @Override
-    public List<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId) throws ResourceNotFoundException {
+    public Page<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId, Pageable pageable) throws ResourceNotFoundException {
         PatientAppointment appointment = getById(patientAppointmentId);
-        return patientAppointmentAuditRepository.findAllByPatientAppointment(appointment);
+        return patientAppointmentAuditRepository.findAllByPatientAppointment(appointment, pageable);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class Insurance extends TimestampAudit {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "rate", nullable = false, unique = true)
+    @Column(name = "rate", nullable = false)
     private Double rate;
 
     @Enumerated(EnumType.STRING)
@@ -37,4 +37,9 @@ public class Insurance extends TimestampAudit {
         this.rate = dto.getRate();
     }
 
+    public Insurance(String name, Double rate, EInsuranceStatus status){
+        this.name = name;
+        this.rate = rate;
+        this.status = status;
+    }
 }

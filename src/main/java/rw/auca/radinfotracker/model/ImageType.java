@@ -37,4 +37,10 @@ public class ImageType extends TimestampAudit {
         this.totalCost = dto.getTotalCost();
     }
 
+    public ImageType(String name, EImageTypeStatus status, Double totalCost){
+        this.name = name;
+        this.status = status;
+        this.totalCost = totalCost;
+    }
+
 }
