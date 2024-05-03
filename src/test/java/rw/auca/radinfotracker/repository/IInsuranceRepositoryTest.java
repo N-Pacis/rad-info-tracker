@@ -1,5 +1,6 @@
 package rw.auca.radinfotracker.repository;
 
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import rw.auca.radinfotracker.model.Insurance;
-import rw.auca.radinfotracker.model.enums.EInsuranceStatus;
+import rw.auca.radinfotracker.model.*;
+import rw.auca.radinfotracker.model.enums.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +25,8 @@ class IInsuranceRepositoryTest {
     @Autowired
     private IInsuranceRepository insuranceRepository;
 
+    private final Faker faker = new Faker();
+
     @AfterEach
     void tearDown() {
         insuranceRepository.deleteAll();
@@ -29,13 +34,9 @@ class IInsuranceRepositoryTest {
 
     @Test
     void itShouldReturnAllInsurancesPaginated() {
-        String name = "Insurance name";
-        EInsuranceStatus status = EInsuranceStatus.ACTIVE;
-        Double rate = 0.8;
         Pageable pageable = PageRequest.of(0, 10);
 
-        Insurance insurance = new Insurance(name, rate, status);
-        insuranceRepository.save(insurance);
+        Insurance insurance = createInsurance();
 
         Page<Insurance> insurances = insuranceRepository.searchAll(null,null, pageable);
 
@@ -46,23 +47,13 @@ class IInsuranceRepositoryTest {
 
     @Test
     void itShouldReturnAllInsurancesByFiltersPaginated() {
-        String name = "Insurance name";
-        EInsuranceStatus status = EInsuranceStatus.ACTIVE;
-        Double rate = 0.8;
-
-        String secondName = "Second";
-        EInsuranceStatus secondStatus = EInsuranceStatus.ACTIVE;
-        Double secondRate = 0.8;
-
         Pageable pageable = PageRequest.of(0, 10);
 
-        Insurance insurance = new Insurance(name, rate, status);
-        insuranceRepository.save(insurance);
+        Insurance insurance = createInsurance();
 
-        Insurance secondInsurance = new Insurance(secondName, secondRate, secondStatus);
-        insuranceRepository.save(secondInsurance);
+        Insurance secondInsurance = createInsurance();
 
-        Page<Insurance> insurances = insuranceRepository.searchAll(name,status, pageable);
+        Page<Insurance> insurances = insuranceRepository.searchAll(insurance.getName(),insurance.getStatus(), pageable);
 
         assertEquals(insurances.getTotalElements(), 1);
         assertThat(insurances.getContent()).contains(insurance);
@@ -70,12 +61,7 @@ class IInsuranceRepositoryTest {
 
     @Test
     void itShouldReturnAllInsurancesListed() {
-        String name = "Insurance name";
-        EInsuranceStatus status = EInsuranceStatus.ACTIVE;
-        Double rate = 0.8;
-
-        Insurance insurance = new Insurance(name, rate, status);
-        insuranceRepository.save(insurance);
+        Insurance insurance = createInsurance();
 
         List<Insurance> insurances = insuranceRepository.searchAll(null,null);
 
@@ -86,21 +72,12 @@ class IInsuranceRepositoryTest {
 
     @Test
     void itShouldReturnAllInsurancesByFiltersListed() {
-        String name = "Insurance name";
-        EInsuranceStatus status = EInsuranceStatus.ACTIVE;
-        Double rate = 0.8;
 
-        String secondName = "Second";
-        EInsuranceStatus secondStatus = EInsuranceStatus.INACTIVE;
-        Double secondRate = 0.8;
+        Insurance insurance = createInsurance();
 
-        Insurance insurance = new Insurance(name, rate, status);
-        insuranceRepository.save(insurance);
+        Insurance secondInsurance = createInsurance();
 
-        Insurance secondInsurance = new Insurance(secondName, secondRate, secondStatus);
-        insuranceRepository.save(secondInsurance);
-
-        List<Insurance> insurances = insuranceRepository.searchAll(name,status);
+        List<Insurance> insurances = insuranceRepository.searchAll(insurance.getName(),insurance.getStatus());
 
         assertEquals(insurances.size(), 1);
         assertThat(insurances).contains(insurance);
@@ -108,17 +85,17 @@ class IInsuranceRepositoryTest {
 
     @Test
     void findByNameIgnoreCase() {
-        String name = "Insurance name";
-        EInsuranceStatus status = EInsuranceStatus.ACTIVE;
-        Double rate = 0.8;
+        Insurance insuranceToSave = createInsurance();
 
-        Insurance insuranceToSave = new Insurance(name, rate, status);
-        insuranceRepository.save(insuranceToSave);
-
-        Optional<Insurance> insurance = insuranceRepository.findByNameIgnoreCase(name);
+        Optional<Insurance> insurance = insuranceRepository.findByNameIgnoreCase(insuranceToSave.getName());
 
         assertTrue(insurance.isPresent());
-        assertEquals(insurance.get().getName(), name);
+        assertEquals(insurance.get().getName(), insuranceToSave.getName());
     }
 
+
+    private Insurance createInsurance(){
+        Insurance insurance = new Insurance(UUID.randomUUID(), faker.company().name(), faker.number().randomDouble(2, 0,1), EInsuranceStatus.ACTIVE);
+        return insuranceRepository.save(insurance);
+    }
 }

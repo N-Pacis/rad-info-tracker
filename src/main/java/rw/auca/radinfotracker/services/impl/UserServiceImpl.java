@@ -12,6 +12,7 @@ import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.UserAccount;
 import rw.auca.radinfotracker.model.UserAccountAudit;
+import rw.auca.radinfotracker.model.UserAccountLoginHistory;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.dtos.SetPasswordDTO;
 import rw.auca.radinfotracker.model.enums.EAuditType;
@@ -19,13 +20,15 @@ import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
 import rw.auca.radinfotracker.model.enums.ErrorCode;
 import rw.auca.radinfotracker.repository.IUserAccountAuditRepository;
+import rw.auca.radinfotracker.repository.IUserAccountLoginHistoryRepository;
 import rw.auca.radinfotracker.repository.IUserRepository;
 import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
 import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IAuthenticationService;
 import rw.auca.radinfotracker.services.IUserService;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,12 +45,15 @@ public class UserServiceImpl implements IUserService {
 
     private final IUserAccountAuditRepository userAccountAuditRepository;
 
-    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, IJwtService jwtService, @Lazy IAuthenticationService authenticationService, IUserAccountAuditRepository userAccountAuditRepository) {
+    private final IUserAccountLoginHistoryRepository userAccountLoginHistoryRepository;
+
+    public UserServiceImpl(IUserRepository userRepository, PasswordEncoder passwordEncoder, IJwtService jwtService, @Lazy IAuthenticationService authenticationService, IUserAccountAuditRepository userAccountAuditRepository, IUserAccountLoginHistoryRepository userAccountLoginHistoryRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.userAccountAuditRepository = userAccountAuditRepository;
+        this.userAccountLoginHistoryRepository = userAccountLoginHistoryRepository;
     }
 
 
@@ -170,4 +176,13 @@ public class UserServiceImpl implements IUserService {
 
         return userAccountAuditRepository.findAllByUserAccount(user, pageable);
     }
+
+    @Override
+    public Page<UserAccountLoginHistory> getUserLoginHistory(UUID userId, LocalDate date, Pageable pageable) throws ResourceNotFoundException {
+        UserAccount userAccount = this.getById(userId);
+        LocalDateTime startTime = date.atStartOfDay();
+        LocalDateTime endTime = date.atTime(23,59,59,9999999);
+        return userAccountLoginHistoryRepository.findByUserAndCreatedAtBetween(userAccount, startTime, endTime, pageable);
+    }
+
 }

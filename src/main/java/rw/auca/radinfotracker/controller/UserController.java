@@ -1,5 +1,6 @@
 package rw.auca.radinfotracker.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.PatientAudit;
 import rw.auca.radinfotracker.model.UserAccount;
 import rw.auca.radinfotracker.model.UserAccountAudit;
+import rw.auca.radinfotracker.model.UserAccountLoginHistory;
 import rw.auca.radinfotracker.model.dtos.RegisterUserDTO;
 import rw.auca.radinfotracker.model.dtos.SetPasswordDTO;
 import rw.auca.radinfotracker.model.enums.ERole;
@@ -23,6 +25,7 @@ import rw.auca.radinfotracker.utils.ApiResponse;
 import rw.auca.radinfotracker.utils.Constants;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +96,19 @@ public class UserController extends BaseController{
         return ResponseEntity.ok(
                 new ApiResponse<>(userAudits, localize("responses.getListSuccess"), HttpStatus.OK)
         );
+    }
+
+    @GetMapping(path="/{id}/loginHistory")
+    public ResponseEntity<ApiResponse<Page<UserAccountLoginHistory>>> getUserLoginHistory(
+            @PathVariable(value = "id") UUID id,
+            @RequestParam(value = "date") LocalDate date,
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
+            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit
+    ) throws ResourceNotFoundException {
+        Pageable pageable = (Pageable) PageRequest.of(page-1, limit, Sort.Direction.DESC,"createdAt");
+
+        Page<UserAccountLoginHistory> loginHistory = this.userService.getUserLoginHistory(id, date, pageable);
+        return ResponseEntity.ok(new ApiResponse<>(loginHistory, localize("responses.getListSuccess"), HttpStatus.OK));
     }
 
     @Override
