@@ -2,6 +2,7 @@ package rw.auca.radinfotracker.services.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -32,9 +33,7 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
 
-    @Getter
-    @Value("${upload.directory}")
-    private String root;
+    private final FileStorageService fileStorageService;
 
     @Getter
     @Value("${openapi.service.url}")
@@ -79,18 +78,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String save(MultipartFile file, String filename) throws Exception {
-        try {
-            Path of = Path.of(root);
-            Files.copy(file.getInputStream(), of.resolve(Objects.requireNonNull(filename)));
-            return of + "/" + filename;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    @Override
     public Resource load(String filePath) throws IOException {
         Path path = Path.of(filePath);
         return new ByteArrayResource(Files.readAllBytes(path));
@@ -122,7 +109,7 @@ public class FileServiceImpl implements FileService {
             throw new BadRequestException("exceptions.file.tooLarge");
         }else {
             file.setName(fileName);
-            file.setPath(this.save(document, fileName));
+            file.setPath(fileStorageService.save(document, fileName));
             file.setUrl(baseUrl+"/api/v1/files/");
             file.setStatus(EFileStatus.SAVED);
             file.setType(document.getContentType());

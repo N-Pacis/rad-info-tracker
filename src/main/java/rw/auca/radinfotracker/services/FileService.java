@@ -22,8 +22,6 @@ public interface FileService {
 
     void deleteById(UUID id) throws ResourceNotFoundException, InternalServerErrorException, IOException;
 
-    String save(MultipartFile file, String filename) throws Exception;
-
     Resource load(String path) throws IOException, ResourceNotFoundException;
 
     File create(MultipartFile document) throws Exception;
