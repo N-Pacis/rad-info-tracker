@@ -173,9 +173,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version> <!-- Update this version to a version that supports Java 17 -->
+                <version>3.11.0</version>
                 <configuration>
-                    <release>17</release> <!-- Set the Java release version to 17 -->
+                    <release>18</release>
                 </configuration>
             </plugin>
             <plugin>

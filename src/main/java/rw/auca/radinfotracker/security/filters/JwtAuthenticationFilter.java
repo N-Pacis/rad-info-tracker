@@ -49,7 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String requestUri = request.getRequestURI();
 		final String authHeader = request.getHeader("Authorization");
 
-		System.out.println("Authorization header "+authHeader);
 		final String jwt;
 
 		if (Arrays.stream(SecurityConfig.AUTH_WHITELIST).anyMatch(pattern -> PATH_MATCHER.match(pattern, requestUri))) {

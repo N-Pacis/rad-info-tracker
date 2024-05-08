@@ -12,29 +12,6 @@ import java.util.UUID;
 
 public class FileUtil {
     /**
-     * GetFileName from a path
-     * @param path File Path
-     * @return String fileName
-     */
-    public static  String getFileNameFromFilePath(String path) {
-        String fileName = new File(path).getName();
-        if (fileName.lastIndexOf(".") > 0)
-            fileName = fileName.substring(0, fileName.lastIndexOf("."));
-        return fileName;
-    }
-
-    /**
-     * Gert fileSize from a path
-     * @param fileLocalPath File Local Path
-     * @return long File Size
-     * @throws IOException
-     */
-    public static long getFileSizeFromPath(String fileLocalPath) throws IOException {
-        Path path = Paths.get(fileLocalPath);
-        return Files.size(path);
-    }
-
-    /**
      * Get FileSizeType from fileSize
      * @param size File Size in TB, GB, MB, KB
      * @return String of FileSizedTypeEnum
@@ -72,29 +49,6 @@ public class FileUtil {
         else
             return (int) size;
     }
-
-    /**
-     * Get File Type From File Path
-     * @param path String File Path
-     * @return String fileType
-     * @throws IOException
-     */
-    public static String getFileTypeFromFilePath(String path) throws IOException {
-        return Files.probeContentType(Paths.get(path));
-    }
-
-    /**
-     * Get File Extension From File
-     * @param file File
-     * @return String fileExtension
-     */
-    private static String getFileExtensionFromFile(File file) {
-        String fileName = file.getName();
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-            return "." + fileName.substring(fileName.lastIndexOf(".")+1);
-        else return "";
-    }
-
 
     /**
      * Generate Random UUID

@@ -54,18 +54,18 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     public LoginResponseDTO signIn(LoginRequest request, String userAgent, String deviceType) {
 
         UserAccount user = null;
-        request.setLogin(request.getLogin().trim());
+        request.setEmail(request.getEmail().trim());
         request.setPassword(request.getPassword().trim());
 
         try{
 
-            user = userRepository.findByEmail(request.getLogin()).orElseThrow(InvalidCredentialsException::new);
+            user = userRepository.findByEmail(request.getEmail()).orElseThrow(InvalidCredentialsException::new);
 
             if(user.getStatus().equals(EUserStatus.INACTIVE))
                 throw new InvalidCredentialsException("exceptions.badRequest.accountLocked");
 
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getLogin(), request.getPassword()));
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
             saveLoginHistory(user, userAgent, deviceType);
 

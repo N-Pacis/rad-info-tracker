@@ -19,7 +19,7 @@ public class UserSeeder {
 
             if(userRepo.findByEmail("admin@radInfoTracker.rw").isEmpty()){
 
-                RegisterUserDTO userDto = new RegisterUserDTO("System", "Admin","admin@radInfoTracker.rw", "+250787161515","", ERole.ADMIN);
+                RegisterUserDTO userDto = new RegisterUserDTO("System", "Admin","admin@radInfoTracker.rw", "00000000000","", ERole.ADMIN);
 
                 UserAccount userAccount = new UserAccount(userDto);
                 userAccount.setRole(ERole.ADMIN);
