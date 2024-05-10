@@ -65,7 +65,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         if(!radiologist.getRole().equals(ERole.RADIOLOGIST)) throw new BadRequestException("exceptions.badRequest.appointment.invalidRadiologist");
 
         UserAccount technician = userService.getById(dto.getTechnicianId());
-        if(technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
+        if(!technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
 
         Insurance insurance = insuranceService.getById(dto.getInsuranceId());
 
@@ -96,7 +96,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         if(!radiologist.getRole().equals(ERole.RADIOLOGIST)) throw new BadRequestException("exceptions.badRequest.appointment.invalidRadiologist");
 
         UserAccount technician = userService.getById(technicianId);
-        if(technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
+        if(!technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
 
         return patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
     }
