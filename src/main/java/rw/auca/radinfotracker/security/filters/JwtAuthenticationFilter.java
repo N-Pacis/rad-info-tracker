@@ -56,12 +56,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
+		if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		jwt = authHeader.replace("Bearer ", "").trim();
+		jwt = authHeader.replace("Bearer", "").trim();
 		String userEmail = jwtService.extractUserName(jwt);
 
 		if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
