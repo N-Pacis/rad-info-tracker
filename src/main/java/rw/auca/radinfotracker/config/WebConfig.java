@@ -11,11 +11,11 @@ public class WebConfig  implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
-                .allowedMethods("PUT", "DELETE", "POST", "GET")
-                .allowedHeaders("Authorization", "header3", "Origin", "Access-Control-Allow-Origin", "Content-Type",
+                .allowedMethods("PUT", "DELETE", "POST", "GET", "OPTIONS", "PATCH")
+                .allowedHeaders("Authorization", "authorization", "header3", "Origin", "Access-Control-Allow-Origin", "Content-Type",
                         "Accept", "Origin, Accept", "X-Requested-With",
                         "Access-Control-Request-Method", "Access-Control-Request-Headers")
-                .exposedHeaders("Origin", "Content-Type", "Accept", "Authorization",
+                .exposedHeaders("Origin", "Content-Type", "Accept", "Authorization", "authorization",
                         "Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                 .allowCredentials(true);
     }
