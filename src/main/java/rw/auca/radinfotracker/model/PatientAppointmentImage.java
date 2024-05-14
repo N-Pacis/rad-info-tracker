@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ public class PatientAppointmentImage {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private File image;
 
     @Column
@@ -30,6 +33,7 @@ public class PatientAppointmentImage {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "appointment_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private PatientAppointment appointment;
 
     public PatientAppointmentImage(File image, String remarks, PatientAppointment appointment){

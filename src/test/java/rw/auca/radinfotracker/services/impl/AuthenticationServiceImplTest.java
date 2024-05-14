@@ -27,6 +27,7 @@ import rw.auca.radinfotracker.security.dtos.LoginResponseDTO;
 import rw.auca.radinfotracker.security.dtos.UserDetailsImpl;
 import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IUserService;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -62,7 +63,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void signIn_WithValidCredentials_ReturnsJwtToken() {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createTechnician();
         LoginRequest loginRequest = new LoginRequest(userAccount.getEmail(), userAccount.getPassword());
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
         String deviceType = "Desktop";
@@ -88,7 +89,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void signOut_WithLoggedInUser_InvalidatesUserLogin() throws ResourceNotFoundException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createTechnician();
         userAccount.setLoginStatus(ELoginStatus.ACTIVE);
 
         when(userService.getLoggedInUser()).thenReturn(userAccount);
@@ -108,7 +109,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void updatePassword_WithValidOldPassword_PasswordUpdated() throws ResourceNotFoundException, BadRequestException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createTechnician();
         UpdatePasswordDTO updatePasswordDTO = new UpdatePasswordDTO(userAccount.getPassword(), "newPassword");
 
         CustomUserDTO customUserDTO = new CustomUserDTO(userAccount);
@@ -126,7 +127,7 @@ class AuthenticationServiceImplTest {
 
     @Test
     void updatePassword_WithInvalidOldPassword_ThrowsBadRequestException() throws ResourceNotFoundException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createTechnician();
         UpdatePasswordDTO updatePasswordDTO = new UpdatePasswordDTO("wrongOldPassword", "newPassword");
 
         when(userService.getLoggedInUser()).thenReturn(userAccount);
@@ -136,7 +137,4 @@ class AuthenticationServiceImplTest {
         verify(userAccountAuditRepository, never()).save(any(UserAccountAudit.class));
     }
 
-    private UserAccount createUserAccount() {
-        return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
-    }
 }

@@ -20,6 +20,7 @@ import rw.auca.radinfotracker.repository.IPatientAuditRepository;
 import rw.auca.radinfotracker.repository.IPatientRepository;
 import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
 import rw.auca.radinfotracker.security.service.IJwtService;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -56,9 +57,9 @@ class PatientServiceImplTest {
     @Test
     void register_shouldRegisterNewPatient() throws BadRequestException {
         NewPatientDTO dto = new NewPatientDTO(faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(),faker.address().streetAddress(), LocalDate.now().minusDays(1));
-        CustomUserDTO userDTO = new CustomUserDTO(createUserAccount());
+        CustomUserDTO userDTO = new CustomUserDTO(Data.createTechnician());
         when(jwtService.extractLoggedInUser()).thenReturn(userDTO);
-        when(patientRepository.save(any(Patient.class))).thenReturn(createPatient());
+        when(patientRepository.save(any(Patient.class))).thenReturn(Data.createPatient());
 
         patientService.register(dto);
 
@@ -68,7 +69,7 @@ class PatientServiceImplTest {
 
     @Test
     void deactivate_shouldThrowBadRequestExceptionForInactivePatient() {
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
         patient.setStatus(EPatientStatus.INACTIVE);
         when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
@@ -77,9 +78,9 @@ class PatientServiceImplTest {
 
     @Test
     void deactivate_shouldDeactivatePatient() throws BadRequestException, ResourceNotFoundException {
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
         when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
-        CustomUserDTO userDTO = new CustomUserDTO(createUserAccount());
+        CustomUserDTO userDTO = new CustomUserDTO(Data.createTechnician());
         when(jwtService.extractLoggedInUser()).thenReturn(userDTO);
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
@@ -91,7 +92,7 @@ class PatientServiceImplTest {
 
     @Test
     void activate_shouldThrowBadRequestExceptionForActivePatient() {
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
         when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
 
         assertThrows(BadRequestException.class, () -> patientService.activate(patient.getId()));
@@ -99,10 +100,10 @@ class PatientServiceImplTest {
 
     @Test
     void activate_shouldActivatePatient() throws BadRequestException, ResourceNotFoundException {
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
         patient.setStatus(EPatientStatus.INACTIVE);
         when(patientRepository.findById(patient.getId())).thenReturn(Optional.of(patient));
-        CustomUserDTO userDTO = new CustomUserDTO(createUserAccount());
+        CustomUserDTO userDTO = new CustomUserDTO(Data.createTechnician());
         when(jwtService.extractLoggedInUser()).thenReturn(userDTO);
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
@@ -111,12 +112,5 @@ class PatientServiceImplTest {
         verify(patientRepository, times(1)).save(any(Patient.class));
         verify(patientAuditRepository, times(1)).save(any(PatientAudit.class));
     }
-
-    private Patient createPatient(){
-        return new Patient(UUID.randomUUID(), faker.code().asin(), faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(), LocalDate.now(), EPatientStatus.ACTIVE, faker.address().streetAddress());
-    }
-
-    private UserAccount createUserAccount() {
-        return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
-    }
+    
 }

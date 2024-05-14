@@ -21,6 +21,7 @@ import rw.auca.radinfotracker.repository.IPatientAppointmentRepository;
 import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
 import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.*;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -63,7 +64,7 @@ class PatientAppointmentServiceImplTest {
     void create_shouldThrowBadRequestExceptionForInvalidRadiologist() throws ResourceNotFoundException {
         UserAccount technician = createTechnician();
         UserAccount radiologist = createRadiologist();
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
 
         NewPatientAppointmentDTO dto = new NewPatientAppointmentDTO();
         dto.setPatientId(UUID.randomUUID());
@@ -83,7 +84,7 @@ class PatientAppointmentServiceImplTest {
     void create_shouldThrowBadRequestExceptionForInvalidTechnician() throws ResourceNotFoundException {
         UserAccount technician = createTechnician();
         UserAccount radiologist = createRadiologist();
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
 
         NewPatientAppointmentDTO dto = new NewPatientAppointmentDTO();
         dto.setPatientId(UUID.randomUUID());
@@ -102,11 +103,11 @@ class PatientAppointmentServiceImplTest {
 
     @Test
     void create_shouldCreatePatientAppointment() throws ResourceNotFoundException, BadRequestException {
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
         UserAccount radiologist = createRadiologist();
         UserAccount technician = createTechnician();
-        Insurance insurance = createInsurance();
-        ImageType imageType = createImageType();
+        Insurance insurance = Data.createInsurance();
+        ImageType imageType = Data.createImageType();
 
         NewPatientAppointmentDTO dto = new NewPatientAppointmentDTO();
         dto.setPatientId(patient.getId());
@@ -188,29 +189,17 @@ class PatientAppointmentServiceImplTest {
         verify(patientAppointmentRepository, times(1)).searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
     }
     private PatientAppointment createPatientAppointment(){
-        Patient patient = createPatient();
+        Patient patient = Data.createPatient();
 
-        Insurance insurance = createInsurance();
+        Insurance insurance = Data.createInsurance();
 
-        ImageType imageType = createImageType();
+        ImageType imageType = Data.createImageType();
 
         UserAccount radiologist = createRadiologist();
 
         UserAccount technician = createTechnician();
 
        return new PatientAppointment(UUID.randomUUID(), faker.code().asin(), LocalDate.now(), EAppointmentStatus.PENDING, patient, insurance, imageType, radiologist, technician, imageType.getTotalCost() * insurance.getRate());
-    }
-
-    private Patient createPatient(){
-        return new Patient(UUID.randomUUID(), faker.code().asin(), faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(), LocalDate.now(), EPatientStatus.ACTIVE, faker.address().streetAddress());
-    }
-
-    private Insurance createInsurance(){
-        return new Insurance(UUID.randomUUID(), faker.company().name(), faker.number().randomDouble(2, 0,1), EInsuranceStatus.ACTIVE);
-    }
-
-    private ImageType createImageType(){
-        return new ImageType(UUID.randomUUID(), faker.medical().medicineName(), EImageTypeStatus.ACTIVE, Double.valueOf(faker.commerce().price()));
     }
 
     private UserAccount createRadiologist(){

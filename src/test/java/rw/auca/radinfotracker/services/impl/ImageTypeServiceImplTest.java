@@ -14,6 +14,7 @@ import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.dtos.NewImageTypeDTO;
 import rw.auca.radinfotracker.model.enums.*;
 import rw.auca.radinfotracker.repository.IImageTypeRepository;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -49,7 +50,7 @@ class ImageTypeServiceImplTest {
     @Test
     void register_WithDuplicateImageTypeName_ThrowsBadRequestException() {
         NewImageTypeDTO newImageTypeDTO = new NewImageTypeDTO(faker.medical().medicineName(), Double.valueOf(faker.commerce().price()));
-        ImageType existingImageType = createImageType();
+        ImageType existingImageType = Data.createImageType();
         existingImageType.setName(newImageTypeDTO.getName());
         when(imageTypeRepository.findByNameIgnoreCase(newImageTypeDTO.getName())).thenReturn(Optional.of(existingImageType));
 
@@ -59,7 +60,7 @@ class ImageTypeServiceImplTest {
 
     @Test
     void getById_WithValidId_ReturnsImageType() throws ResourceNotFoundException {
-        ImageType imageType = createImageType();
+        ImageType imageType = Data.createImageType();
         when(imageTypeRepository.findById(imageType.getId())).thenReturn(Optional.of(imageType));
 
         ImageType foundImageType = imageTypeService.getById(imageType.getId());
@@ -75,8 +76,5 @@ class ImageTypeServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> imageTypeService.getById(invalidId));
     }
 
-    private ImageType createImageType(){
-        return new ImageType(UUID.randomUUID(), faker.medical().medicineName(), EImageTypeStatus.ACTIVE, Double.valueOf(faker.commerce().price()));
-    }
 
 }

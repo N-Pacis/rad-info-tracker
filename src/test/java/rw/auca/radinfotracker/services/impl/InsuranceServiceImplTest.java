@@ -12,6 +12,7 @@ import rw.auca.radinfotracker.model.Insurance;
 import rw.auca.radinfotracker.model.dtos.NewInsuranceDTO;
 import rw.auca.radinfotracker.model.enums.EInsuranceStatus;
 import rw.auca.radinfotracker.repository.IInsuranceRepository;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -46,7 +47,7 @@ class InsuranceServiceImplTest {
     @Test
     void register_WithDuplicateInsuranceName_ThrowsBadRequestException() {
         NewInsuranceDTO newInsuranceDTO = new NewInsuranceDTO(faker.company().name(), faker.number().randomDouble(2, 0,1));
-        Insurance existingInsurance = createInsurance();
+        Insurance existingInsurance = Data.createInsurance();
         existingInsurance.setName(newInsuranceDTO.getName());
         when(insuranceRepository.findByNameIgnoreCase(newInsuranceDTO.getName())).thenReturn(Optional.of(existingInsurance));
 
@@ -64,7 +65,7 @@ class InsuranceServiceImplTest {
 
     @Test
     void getById_WithValidId_ReturnsInsurance() throws ResourceNotFoundException {
-        Insurance insurance = createInsurance();
+        Insurance insurance = Data.createInsurance();
         when(insuranceRepository.findById(insurance.getId())).thenReturn(Optional.of(insurance));
 
         Insurance foundInsurance = insuranceService.getById(insurance.getId());
@@ -78,9 +79,5 @@ class InsuranceServiceImplTest {
         when(insuranceRepository.findById(invalidId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> insuranceService.getById(invalidId));
-    }
-
-    private Insurance createInsurance(){
-        return new Insurance(UUID.randomUUID(), faker.company().name(), faker.number().randomDouble(2, 0,1), EInsuranceStatus.ACTIVE);
     }
 }

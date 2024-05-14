@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.enums.*;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -73,30 +74,7 @@ class IPatientAppointmentAuditRepositoryTest {
     }
 
     private PatientAppointmentAudit createPatientAppointmentAudit(){
-        Patient patient = new Patient(UUID.randomUUID(), faker.code().asin(), faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(), LocalDate.now(), EPatientStatus.ACTIVE, faker.address().streetAddress());
-        patient = patientRepository.save(patient);
-
-        Insurance insurance = new Insurance(UUID.randomUUID(), faker.company().name(), faker.number().randomDouble(2, 0,1), EInsuranceStatus.ACTIVE);
-        insurance = insuranceRepository.save(insurance);
-
-        ImageType imageType = new ImageType(UUID.randomUUID(), faker.medical().medicineName(), EImageTypeStatus.ACTIVE, Double.valueOf(faker.commerce().price()));
-        imageType = imageTypeRepository.save(imageType);
-
-        UserAccount radiologist = new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
-        radiologist = userAccountRepository.save(radiologist);
-
-        UserAccount technician = new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
-        technician = userAccountRepository.save(technician);
-
-        PatientAppointment appointment = new PatientAppointment(UUID.randomUUID(), faker.code().asin(), LocalDate.now(), EAppointmentStatus.PENDING, patient, insurance, imageType, radiologist, technician, imageType.getTotalCost() * insurance.getRate());
-        appointment =  patientAppointmentRepository.save(appointment);
-
-        File file = new File(UUID.randomUUID(), faker.name().username(), "", "", 0, EFileSizeType.B, "", EFileStatus.SAVED);
-        file = fileRepository.save(file);
-
-        PatientAppointmentAudit audit = new PatientAppointmentAudit(appointment, EAuditType.CREATE, UUID.randomUUID(), faker.name().fullName(), faker.internet().emailAddress(), "Testing remarks", file);
-
-        return patientAppointmentAuditRepository.save(audit);
+        return patientAppointmentAuditRepository.save(Data.createPatientAppointmentAudit());
     }
 
 }

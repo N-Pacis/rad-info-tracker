@@ -14,6 +14,7 @@ import rw.auca.radinfotracker.model.enums.ELoginStatus;
 import rw.auca.radinfotracker.model.enums.ERole;
 import rw.auca.radinfotracker.model.enums.EUserStatus;
 import rw.auca.radinfotracker.repository.IUserRepository;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,7 +43,7 @@ class UserDetailServiceImplTest {
 
     @Test
     void canLoadAUserByUsername() {
-        UserAccount user = createUserAccount();
+        UserAccount user = Data.createRadiologist();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
@@ -63,7 +64,4 @@ class UserDetailServiceImplTest {
                 .isInstanceOf(UsernameNotFoundException.class);
     }
 
-    private UserAccount createUserAccount() {
-       return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
-    }
 }

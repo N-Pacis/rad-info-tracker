@@ -33,6 +33,7 @@ import rw.auca.radinfotracker.repository.IUserRepository;
 import rw.auca.radinfotracker.security.dtos.CustomUserDTO;
 import rw.auca.radinfotracker.security.service.IJwtService;
 import rw.auca.radinfotracker.services.IAuthenticationService;
+import rw.auca.radinfotracker.utilities.Data;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -66,7 +67,7 @@ class UserServiceImplTest {
 
     @Test
     void getLoggedInUser_WithValidPrincipal_ReturnsUserAccount() throws ResourceNotFoundException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         UserDetails userDetails = new User(userAccount.getEmail(), userAccount.getPassword(), new ArrayList<>());
 
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -94,7 +95,7 @@ class UserServiceImplTest {
 
     @Test
     void getById_WithValidId_ReturnsUserAccount() throws ResourceNotFoundException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         when(userRepository.findById(userAccount.getId())).thenReturn(Optional.of(userAccount));
 
         UserAccount foundUserAccount = userService.getById(userAccount.getId());
@@ -121,7 +122,7 @@ class UserServiceImplTest {
                 ERole.TECHNICIAN
         );
 
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         CustomUserDTO customUserDTO = new CustomUserDTO(userAccount);
 
         when(userRepository.findByEmail(registerUserDTO.getEmail())).thenReturn(Optional.empty());
@@ -151,7 +152,7 @@ class UserServiceImplTest {
                 ERole.RADIOLOGIST
         );
 
-        UserAccount existingUserAccount = createUserAccount();
+        UserAccount existingUserAccount = Data.createRadiologist();
         existingUserAccount.setEmail(registerUserDTO.getEmail());
         existingUserAccount.setPhoneNumber(registerUserDTO.getPhoneNumber());
 
@@ -172,7 +173,7 @@ class UserServiceImplTest {
                 ERole.RADIOLOGIST
         );
 
-        UserAccount existingUserAccount = createUserAccount();
+        UserAccount existingUserAccount = Data.createRadiologist();
         existingUserAccount.setEmail(registerUserDTO.getEmail());
         existingUserAccount.setPhoneNumber(registerUserDTO.getPhoneNumber());
 
@@ -184,7 +185,7 @@ class UserServiceImplTest {
 
     @Test
     void activate_WithInactiveUser_ActivatesUser() throws ResourceNotFoundException, BadRequestException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.INACTIVE);
 
         CustomUserDTO customUserDTO = new CustomUserDTO(userAccount);
@@ -200,7 +201,7 @@ class UserServiceImplTest {
 
     @Test
     void activate_WithNonInactiveUser_ThrowsBadRequestException(){
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.ACTIVE);
 
         when(userRepository.findById(userAccount.getId())).thenReturn(Optional.of(userAccount));
@@ -212,7 +213,7 @@ class UserServiceImplTest {
 
     @Test
     void deactivate_WithActiveOrPendingUser_DeactivatesUser() throws ResourceNotFoundException, BadRequestException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.ACTIVE);
 
         CustomUserDTO customUserDTO = new CustomUserDTO(userAccount);
@@ -228,7 +229,7 @@ class UserServiceImplTest {
 
     @Test
     void deactivate_WithInactiveUser_ThrowsBadRequestException() {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.INACTIVE);
 
         when(userRepository.findById(userAccount.getId())).thenReturn(Optional.of(userAccount));
@@ -240,7 +241,7 @@ class UserServiceImplTest {
 
     @Test
     void resetPassword_WithActiveOrPendingUser_ResetsPassword() throws ResourceNotFoundException, BadRequestException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.ACTIVE);
         SetPasswordDTO setPasswordDTO = new SetPasswordDTO("newPassword");
 
@@ -259,7 +260,7 @@ class UserServiceImplTest {
 
     @Test
     void resetPassword_WithInactiveUser_ThrowsBadRequestException() {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         userAccount.setStatus(EUserStatus.INACTIVE);
         SetPasswordDTO setPasswordDTO = new SetPasswordDTO("newPassword");
 
@@ -272,7 +273,7 @@ class UserServiceImplTest {
 
     @Test
     void getAuditByUser_WithValidUserId_ReturnsAuditRecords() throws ResourceNotFoundException {
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createTechnician();
         Pageable pageable = PageRequest.of(0, 10);
 
         List<UserAccountAudit> auditRecords = Arrays.asList(
@@ -302,7 +303,7 @@ class UserServiceImplTest {
     @Test
     void getUserLoginHistory_WithValidUserIdAndDate_ReturnsLoginHistory() throws ResourceNotFoundException {
         UUID userId = UUID.randomUUID();
-        UserAccount userAccount = createUserAccount();
+        UserAccount userAccount = Data.createRadiologist();
         LocalDate date = LocalDate.now();
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -330,9 +331,5 @@ class UserServiceImplTest {
         when(userRepository.findById(invalidUserId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserLoginHistory(invalidUserId, date, pageable));
-    }
-
-    private UserAccount createUserAccount() {
-        return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
     }
 }
