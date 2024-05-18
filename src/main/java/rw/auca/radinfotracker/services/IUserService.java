@@ -30,6 +30,8 @@ public interface IUserService {
 
     Page<UserAccount> searchAll(String q, ERole role, EUserStatus status, Pageable pageable) throws ResourceNotFoundException;
 
+    List<UserAccount> getAllActiveUsersAsList(String q, ERole role);
+
     @Transactional
     UserAccount resetPassword(UUID id, SetPasswordDTO passwordDTO) throws ResourceNotFoundException, BadRequestException;
 

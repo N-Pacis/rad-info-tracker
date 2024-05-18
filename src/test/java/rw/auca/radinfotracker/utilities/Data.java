@@ -5,6 +5,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import rw.auca.radinfotracker.model.*;
 import rw.auca.radinfotracker.model.dtos.NewImageTypeDTO;
 import rw.auca.radinfotracker.model.dtos.NewInsuranceDTO;
+import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.*;
 import rw.auca.radinfotracker.security.dtos.LoginRequest;
 
@@ -62,6 +63,10 @@ public class Data {
         return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.RADIOLOGIST, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
     }
 
+    public static UserAccount createFrontDesk(){
+        return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.FRONT_DESK, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
+    }
+
     public static UserAccount createTechnician(){
         return new UserAccount(UUID.randomUUID(), faker.name().firstName(), faker.name().lastName(), faker.internet().emailAddress(), faker.phoneNumber().phoneNumber(), ERole.TECHNICIAN, EUserStatus.ACTIVE, ELoginStatus.INACTIVE, faker.internet().password());
     }
@@ -76,4 +81,9 @@ public class Data {
     public static NewInsuranceDTO insuranceDTO(){
         return new NewInsuranceDTO(faker.company().name(),faker.number().randomDouble(2, 0,1));
     }
+
+    public static NewPatientDTO patientDTO(){
+        return new NewPatientDTO(faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber(), faker.address().streetAddress(), LocalDate.now());
+    }
+
 }

@@ -29,6 +29,7 @@ import rw.auca.radinfotracker.services.IUserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -145,6 +146,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Page<UserAccount> searchAll(String q, ERole role, EUserStatus status, Pageable pageable) {
         return this.userRepository.searchAll(q, status,role, pageable);
+    }
+
+    @Override
+    public List<UserAccount> getAllActiveUsersAsList(String q, ERole role) {
+        return this.userRepository.searchAll(q, EUserStatus.ACTIVE,role);
     }
 
     @Override

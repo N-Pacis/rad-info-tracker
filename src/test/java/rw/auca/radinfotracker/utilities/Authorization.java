@@ -80,6 +80,13 @@ public class Authorization {
         userRepository.save(radiologistUser);
         tokenMap.put(ERole.RADIOLOGIST, obtainAccessToken(radiologistUser, password));
 
+        UserAccount frontDeskUser = Data.createFrontDesk();
+        frontDeskUser.setRole(ERole.FRONT_DESK);
+        frontDeskUser.setEmail("frontdesk@email.com");
+        frontDeskUser.setPassword(passwordEncoder.encode(password));
+        userRepository.save(frontDeskUser);
+        tokenMap.put(ERole.FRONT_DESK, obtainAccessToken(frontDeskUser, password));
+
         return tokenMap;
     }
 

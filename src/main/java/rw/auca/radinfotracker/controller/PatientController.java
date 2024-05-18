@@ -13,6 +13,7 @@ import rw.auca.radinfotracker.exceptions.BadRequestException;
 import rw.auca.radinfotracker.exceptions.ResourceNotFoundException;
 import rw.auca.radinfotracker.model.Patient;
 import rw.auca.radinfotracker.model.PatientAudit;
+import rw.auca.radinfotracker.model.UserAccount;
 import rw.auca.radinfotracker.model.dtos.NewPatientDTO;
 import rw.auca.radinfotracker.model.enums.EPatientStatus;
 import rw.auca.radinfotracker.services.IPatientService;
@@ -44,6 +45,15 @@ public class PatientController extends BaseController{
         Page<Patient> patients = this.patientService.getAll(query, status, pageable);
         return ResponseEntity.ok(
                 new ApiResponse<>(patients, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
+    @GetMapping(value = "/byId/{id}")
+    public ResponseEntity<ApiResponse<Patient>> getById(
+            @PathVariable() UUID id) throws ResourceNotFoundException {
+        Patient patient = this.patientService.getById(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(patient, localize("responses.getListSuccess"), HttpStatus.OK)
         );
     }
 

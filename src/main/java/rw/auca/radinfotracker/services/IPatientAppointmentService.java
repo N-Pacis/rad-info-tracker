@@ -24,7 +24,7 @@ public interface IPatientAppointmentService {
 
      Page<PatientAppointment> getAllMyAppointmentsByDate(LocalDate date, Pageable pageable) throws ResourceNotFoundException;
 
-     PatientAppointment getById(UUID id) throws BadRequestException, ResourceNotFoundException;
+     PatientAppointment getById(UUID id) throws ResourceNotFoundException;
 
      Page<PatientAppointmentAudit> getAppointmentAudits(UUID patientAppointmentId, Pageable pageable) throws BadRequestException, ResourceNotFoundException;
 

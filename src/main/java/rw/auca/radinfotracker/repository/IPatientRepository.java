@@ -15,13 +15,13 @@ import java.util.UUID;
 public interface IPatientRepository extends JpaRepository<Patient, UUID> {
 
     @Query("SELECT p FROM Patient p WHERE " +
-            "(:status IS NULL OR p.status =:status) AND " +
-            "(LOWER(CONCAT(TRIM(p.firstName), ' ', TRIM(p.lastName))) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
-            "(LOWER(TRIM(p.firstName)) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
-            "(LOWER(TRIM(p.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
-            "(LOWER(TRIM(p.refNumber)) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
-            "(LOWER(TRIM(p.address)) LIKE LOWER(CONCAT('%', :query, '%'))) OR " +
-            "LOWER(TRIM(p.phoneNumber)) LIKE LOWER(CONCAT('%', :query, '%'))")
+            "(:status IS NULL OR p.status = :status) AND (" +
+            "LOWER(CONCAT(TRIM(p.firstName), ' ', TRIM(p.lastName))) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(TRIM(p.firstName)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(TRIM(p.lastName)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(TRIM(p.refNumber)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(TRIM(p.address)) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(TRIM(p.phoneNumber)) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<Patient> searchAll(String query, EPatientStatus status, Pageable pageable);
 
     Optional<Patient> findByRefNumber(String refNumber);

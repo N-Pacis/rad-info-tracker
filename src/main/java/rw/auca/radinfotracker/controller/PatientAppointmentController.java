@@ -37,6 +37,15 @@ import java.util.UUID;
 public class PatientAppointmentController extends BaseController{
     private final IPatientAppointmentService patientAppointmentService;
 
+    @GetMapping(value = "/byId/{id}")
+    public ResponseEntity<ApiResponse<PatientAppointment>> getAppointmentById(
+            @PathVariable() UUID id) throws ResourceNotFoundException {
+        PatientAppointment appointment = this.patientAppointmentService.getById(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(appointment, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
     @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
     @GetMapping("/byDate/{date}")
     public ResponseEntity<ApiResponse<Page<PatientAppointment>>> searchAll(

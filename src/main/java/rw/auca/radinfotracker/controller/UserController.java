@@ -52,6 +52,27 @@ public class UserController extends BaseController{
         );
     }
 
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK','ADMIN')")
+    @GetMapping(value = "/asList")
+    public ResponseEntity<ApiResponse<List<UserAccount>>> searchAllAsList(
+            @RequestParam(value = "q",required = false,defaultValue = "") String query,
+            @RequestParam(value = "role", required = false) ERole role) {
+
+        List<UserAccount> users = this.userService.getAllActiveUsersAsList(query, role);
+        return ResponseEntity.ok(
+                new ApiResponse<>(users, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
+    @GetMapping(value = "/byId/{id}")
+    public ResponseEntity<ApiResponse<UserAccount>> getUserById(
+            @PathVariable() UUID id) throws ResourceNotFoundException {
+        UserAccount user = this.userService.getById(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(user, localize("responses.getListSuccess"), HttpStatus.OK)
+        );
+    }
+
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<?>> register(@Valid @RequestBody RegisterUserDTO dto) throws BadRequestException {
