@@ -64,6 +64,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             if(user.getStatus().equals(EUserStatus.INACTIVE))
                 throw new InvalidCredentialsException("exceptions.badRequest.accountLocked");
 
+            if(user.getStatus().equals(EUserStatus.PENDING))
+                throw new InvalidCredentialsException("exceptions.badRequest.accountPending");
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
