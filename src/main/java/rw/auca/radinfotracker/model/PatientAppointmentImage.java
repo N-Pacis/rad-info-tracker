@@ -1,6 +1,7 @@
 package rw.auca.radinfotracker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.*;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Valid
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PatientAppointmentImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -2,6 +2,7 @@ package rw.auca.radinfotracker.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserAccount extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

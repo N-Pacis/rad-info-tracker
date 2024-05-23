@@ -1,5 +1,6 @@
 package rw.auca.radinfotracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import rw.auca.radinfotracker.audits.TimestampAudit;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table
-@Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Insurance extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

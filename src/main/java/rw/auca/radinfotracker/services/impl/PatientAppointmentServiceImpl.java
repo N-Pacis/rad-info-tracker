@@ -80,7 +80,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         }
 
         PatientAppointment patientAppointment = new PatientAppointment(refNumber, dto.getDate(), patient, insurance, imageType,radiologist, technician);
-        patientAppointment.setAmountToPay(imageType.getTotalCost() * insurance.getRate());
+        patientAppointment.setAmountToPay(imageType.getTotalCost() * (1.00 - insurance.getRate()));
         patientAppointment = patientAppointmentRepository.save(patientAppointment);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
@@ -112,12 +112,12 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
             return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.PENDING, pageable);
         }
         else if(user.getRole().equals(ERole.QUALITY_ASSURANCE)){
-            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.ATTENDED, pageable);
+            return patientAppointmentRepository.findAllByDateAndStatus(date, EAppointmentStatus.ATTENDED, pageable);
         }
         else if(user.getRole().equals(ERole.FINANCE)){
-            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.CONSULTED, pageable);
+            return patientAppointmentRepository.findAllByDateAndStatus(date, EAppointmentStatus.CONSULTED, pageable);
         }
-        return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, null, pageable);
+        return null;
     }
 
     @Override

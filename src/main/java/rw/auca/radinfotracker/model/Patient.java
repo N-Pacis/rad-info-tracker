@@ -1,5 +1,7 @@
 package rw.auca.radinfotracker.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import rw.auca.radinfotracker.audits.TimestampAudit;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Patient extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,6 +37,7 @@ public class Patient extends TimestampAudit {
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 

@@ -100,6 +100,7 @@ public class UserServiceImpl implements IUserService {
 
         UserAccount user = new UserAccount(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setStatus(EUserStatus.ACTIVE);
         this.userRepository.save(user);
 
         CustomUserDTO userDTO = this.jwtService.extractLoggedInUser();
@@ -113,8 +114,8 @@ public class UserServiceImpl implements IUserService {
     public UserAccount activate(UUID userId) throws ResourceNotFoundException, BadRequestException {
         UserAccount user = getById(userId);
 
-        if(!user.getStatus().equals(EUserStatus.INACTIVE))
-            throw new BadRequestException(ErrorCode.BAD_REQUEST, "exceptions.badRequest.userNot.Inactive");
+        if(!user.getStatus().equals(EUserStatus.INACTIVE) && !user.getStatus().equals(EUserStatus.PENDING))
+            throw new BadRequestException(ErrorCode.BAD_REQUEST, "exceptions.badRequest.userNot.pending.orInactive");
 
         user.setStatus(EUserStatus.ACTIVE);
         authenticationService.invalidateUserLogin(user);

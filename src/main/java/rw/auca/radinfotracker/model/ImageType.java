@@ -1,5 +1,6 @@
 package rw.auca.radinfotracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import rw.auca.radinfotracker.audits.TimestampAudit;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ImageType extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

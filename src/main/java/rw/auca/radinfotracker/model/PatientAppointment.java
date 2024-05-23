@@ -1,6 +1,8 @@
 package rw.auca.radinfotracker.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientAppointment extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +35,7 @@ public class PatientAppointment extends TimestampAudit {
     @Column(name = "ref_number", nullable = false, unique = true)
     private String refNumber;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
