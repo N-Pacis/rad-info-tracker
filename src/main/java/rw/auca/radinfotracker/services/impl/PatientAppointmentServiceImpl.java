@@ -134,7 +134,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     @Override
     public PatientAppointmentImage addImage(UUID appointmentId, UUID imageId, String remarks) throws ResourceNotFoundException, BadRequestException {
         PatientAppointment appointment = getById(appointmentId);
-        if(appointment.getStatus().equals(EAppointmentStatus.PENDING))
+        if(!appointment.getStatus().equals(EAppointmentStatus.PENDING))
             throw new BadRequestException("exceptions.badRequest.appointment.notPending");
 
         File image = fileService.findById(imageId);
@@ -192,7 +192,10 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
     @Override
     public PatientAppointment markAppointmentAsPaid(UUID appointmentId) throws ResourceNotFoundException, BadRequestException {
         PatientAppointment appointment = getById(appointmentId);
-        if(!appointment.getPaymentStatus().equals(EPaymentStatus.PAID))
+        if(!appointment.getStatus().equals(EAppointmentStatus.CONSULTED))
+            throw new BadRequestException("exceptions.badRequest.appointment.notConsulted");
+
+        if(appointment.getPaymentStatus().equals(EPaymentStatus.PAID))
             throw new BadRequestException("exceptions.badRequest.appointment.paid");
 
         appointment.setPaymentStatus(EPaymentStatus.PAID);
