@@ -106,16 +106,16 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         UserAccount user = userService.getLoggedInUser();
 
         if(user.getRole().equals(ERole.RADIOLOGIST)){
-            return patientAppointmentRepository.findAllByDateAndRadiologistAndStatus(date, user, EAppointmentStatus.QUALITY_CHECKED, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.QUALITY_CHECKED, null, date, user, null, pageable);
         }
         else if(user.getRole().equals(ERole.TECHNICIAN)){
-            return patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(date, user, EAppointmentStatus.PENDING, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.PENDING, null, date, null, user, pageable);
         }
         else if(user.getRole().equals(ERole.QUALITY_ASSURANCE)){
-            return patientAppointmentRepository.findAllByDateAndStatus(date, EAppointmentStatus.ATTENDED, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.ATTENDED, null, date, null, null, pageable);
         }
         else if(user.getRole().equals(ERole.FINANCE)){
-            return patientAppointmentRepository.findAllByDateAndStatus(date, EAppointmentStatus.CONSULTED, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.CONSULTED, null, date, null, null, pageable);
         }
         return null;
     }

@@ -29,6 +29,7 @@ public interface IPatientAppointmentRepository extends JpaRepository<PatientAppo
 
     Page<PatientAppointment> findAllByDateAndStatus(LocalDate date, EAppointmentStatus status, Pageable pageable);
 
+    @Query("SELECT")
     Page<PatientAppointment> findAllByDateAndRadiologistAndStatus(LocalDate date, UserAccount radiologist, EAppointmentStatus status, Pageable pageable);
 
     Optional<PatientAppointment> findByRefNumber(String refNumber);

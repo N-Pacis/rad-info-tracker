@@ -68,9 +68,9 @@ public class PatientAppointmentController extends BaseController{
     }
 
     @PreAuthorize("hasAnyAuthority('TECHNICIAN','RADIOLOGIST','QUALITY_ASSURANCE','FINANCE','FRONT_DESK')")
-    @GetMapping("/myAppointments/{date}")
+    @GetMapping("/myAppointments")
     public ResponseEntity<ApiResponse<Page<PatientAppointment>>> getMyAppointments(
-            @PathVariable(value = "date") LocalDate date,
+            @RequestParam(value = "date", required = false) LocalDate date,
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
             @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) throws ResourceNotFoundException {
 
