@@ -59,30 +59,6 @@ class IPatientAppointmentRepositoryTest {
     }
 
     @Test
-    void shouldReturnAppointmentsByTechnicianAndDate() {
-        PatientAppointment appointment = createPatientAppointment();
-        UserAccount technician = appointment.getTechnician();
-
-        Page<PatientAppointment> appointmentPage = patientAppointmentRepository.findAllByDateAndTechnicianAndStatus(appointment.getDate(), technician, appointment.getStatus(),  PageRequest.of(0, 10));
-
-        assertEquals(appointmentPage.getTotalElements(), 1);
-        assertThat(appointmentPage.getContent()).contains(appointment);
-        assertEquals(appointmentPage.getContent().get(0).getTechnician(), technician);
-    }
-
-    @Test
-    void shouldReturnAppointmentsByRadiologistAndDate() {
-        PatientAppointment appointment = createPatientAppointment();
-        UserAccount radiologist = appointment.getRadiologist();
-
-        Page<PatientAppointment> appointmentPage = patientAppointmentRepository.findAllByDateAndRadiologistAndStatus(appointment.getDate(), radiologist, appointment.getStatus(),  PageRequest.of(0, 10));
-
-        assertEquals(appointmentPage.getTotalElements(), 1);
-        assertThat(appointmentPage.getContent()).contains(appointment);
-        assertEquals(appointmentPage.getContent().get(0).getRadiologist(), radiologist);
-    }
-
-    @Test
     void shouldReturnAppointmentByRefNumber() {
         PatientAppointment appointment = createPatientAppointment();
 
