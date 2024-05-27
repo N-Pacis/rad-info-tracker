@@ -30,7 +30,7 @@ import java.util.UUID;
 public class PatientController extends BaseController{
     private final IPatientService patientService;
 
-    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
+    @PreAuthorize("hasAnyAuthority('FRONT_DESK','ADMIN')")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Patient>>> searchAll(
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
