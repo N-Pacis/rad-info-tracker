@@ -90,32 +90,27 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         return patientAppointment;
     }
 
-    @Override
-    public Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UUID radiologistId, UUID technicianId, Pageable pageable) throws ResourceNotFoundException, BadRequestException {
-        UserAccount radiologist = userService.getById(radiologistId);
-        if(!radiologist.getRole().equals(ERole.RADIOLOGIST)) throw new BadRequestException("exceptions.badRequest.appointment.invalidRadiologist");
-
-        UserAccount technician = userService.getById(technicianId);
-        if(!technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
-
-        return patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist.getId(), technician.getId(), pageable);
-    }
 
     @Override
     public Page<PatientAppointment> getAllMyAppointmentsByDate(LocalDate date, Pageable pageable) throws ResourceNotFoundException {
         UserAccount user = userService.getLoggedInUser();
 
         if(user.getRole().equals(ERole.RADIOLOGIST)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.QUALITY_CHECKED, null, date, user.getId(), null, pageable);
+            if(date != null) return patientAppointmentRepository.findByStatusAndRadiologistAndDate(EAppointmentStatus.QUALITY_CHECKED, user,date, pageable);
+            return patientAppointmentRepository.findByStatusAndRadiologist(EAppointmentStatus.QUALITY_CHECKED, user, pageable);
         }
         else if(user.getRole().equals(ERole.TECHNICIAN)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.PENDING, null, date, null, user.getId(), pageable);
+            if(date != null) return patientAppointmentRepository.findByStatusAndTechnicianAndDate(EAppointmentStatus.PENDING, user,date, pageable);
+            return patientAppointmentRepository.findByStatusAndTechnician(EAppointmentStatus.PENDING, user, pageable);
         }
         else if(user.getRole().equals(ERole.QUALITY_ASSURANCE)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.ATTENDED, null, date, null, null, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.ATTENDED, null,date, pageable);
         }
         else if(user.getRole().equals(ERole.FINANCE)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.CONSULTED, null, date, null, null, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.CONSULTED, null,date, pageable);
+        }
+        else if(user.getRole().equals(ERole.FRONT_DESK)){
+            return patientAppointmentRepository.searchAllByDate(null, null,date,pageable);
         }
         return null;
     }

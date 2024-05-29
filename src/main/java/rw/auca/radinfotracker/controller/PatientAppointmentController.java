@@ -46,27 +46,6 @@ public class PatientAppointmentController extends BaseController{
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('FRONT_DESK')")
-    @GetMapping("/byDate/{date}")
-    public ResponseEntity<ApiResponse<Page<PatientAppointment>>> searchAll(
-            @PathVariable(value = "date") LocalDate date,
-            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER) int page,
-            @RequestParam(value = "status", required = false) EAppointmentStatus status,
-            @RequestParam(value = "paymentStatus", required = false) EPaymentStatus paymentStatus,
-            @RequestParam(value = "radiologist", required = false) UUID radiologist,
-            @RequestParam(value = "technician", required = false) UUID technician,
-            @RequestParam(value = "limit", defaultValue = Constants.DEFAULT_PAGE_SIZE) int limit) throws BadRequestException, ResourceNotFoundException {
-
-        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
-
-        Pageable pageable = PageRequest.of(page - 1, limit, sort);
-
-        Page<PatientAppointment> appointments = this.patientAppointmentService.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
-        return ResponseEntity.ok(
-                new ApiResponse<>(appointments, localize("responses.getListSuccess"), HttpStatus.OK)
-        );
-    }
-
     @PreAuthorize("hasAnyAuthority('TECHNICIAN','RADIOLOGIST','QUALITY_ASSURANCE','FINANCE','FRONT_DESK')")
     @GetMapping("/myAppointments")
     public ResponseEntity<ApiResponse<Page<PatientAppointment>>> getMyAppointments(

@@ -20,8 +20,6 @@ import java.util.UUID;
 public interface IPatientAppointmentService {
      PatientAppointment create(NewPatientAppointmentDTO dto) throws ResourceNotFoundException, BadRequestException;
 
-     Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UUID radiologist, UUID technician, Pageable pageable) throws ResourceNotFoundException, BadRequestException;
-
      Page<PatientAppointment> getAllMyAppointmentsByDate(LocalDate date, Pageable pageable) throws ResourceNotFoundException;
 
      PatientAppointment getById(UUID id) throws ResourceNotFoundException;
