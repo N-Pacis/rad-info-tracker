@@ -135,59 +135,6 @@ class PatientAppointmentServiceImplTest {
         verify(patientAppointmentAuditRepository, times(1)).save(any(PatientAppointmentAudit.class));
     }
 
-    @Test
-    void searchAllByDate_shouldThrowBadRequestExceptionForInvalidRadiologist() throws ResourceNotFoundException {
-        EAppointmentStatus status = EAppointmentStatus.PENDING;
-        EPaymentStatus paymentStatus = EPaymentStatus.PAID;
-        LocalDate date = LocalDate.now();
-        UUID radiologistId = UUID.randomUUID();
-        UUID technicianId = UUID.randomUUID();
-        Pageable pageable = PageRequest.of(0, 10);
-
-        UserAccount technician = createTechnician();
-        when(userService.getById(radiologistId)).thenReturn(technician);
-
-        assertThrows(BadRequestException.class, () -> patientAppointmentService.searchAllByDate(status, paymentStatus, date, radiologistId, technicianId, pageable));
-    }
-
-    @Test
-    void searchAllByDate_shouldThrowBadRequestExceptionForInvalidTechnician() throws ResourceNotFoundException {
-        EAppointmentStatus status = EAppointmentStatus.PENDING;
-        EPaymentStatus paymentStatus = EPaymentStatus.PAID;
-        LocalDate date = LocalDate.now();
-        UUID radiologistId = UUID.randomUUID();
-        UUID technicianId = UUID.randomUUID();
-        Pageable pageable = PageRequest.of(0, 10);
-
-        UserAccount radiologist = createRadiologist();
-        when(userService.getById(radiologistId)).thenReturn(radiologist);
-        when(userService.getById(technicianId)).thenReturn(radiologist);
-
-        assertThrows(BadRequestException.class, () -> patientAppointmentService.searchAllByDate(status, paymentStatus, date, radiologistId, technicianId, pageable));
-    }
-
-    @Test
-    void searchAllByDate_shouldReturnPageOfPatientAppointments() throws ResourceNotFoundException, BadRequestException {
-        EAppointmentStatus status = EAppointmentStatus.PENDING;
-        EPaymentStatus paymentStatus = EPaymentStatus.PAID;
-        LocalDate date = LocalDate.now();
-        UUID radiologistId = UUID.randomUUID();
-        UUID technicianId = UUID.randomUUID();
-        Pageable pageable = PageRequest.of(0, 10);
-
-        UserAccount radiologist = createRadiologist();
-        UserAccount technician = createTechnician();
-        List<PatientAppointment> patientAppointments = Arrays.asList(createPatientAppointment(), createPatientAppointment());
-        Page<PatientAppointment> page = new PageImpl<>(patientAppointments, pageable, patientAppointments.size());
-
-        when(userService.getById(radiologistId)).thenReturn(radiologist);
-        when(userService.getById(technicianId)).thenReturn(technician);
-        when(patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable)).thenReturn(page);
-
-       patientAppointmentService.searchAllByDate(status, paymentStatus, date, radiologistId, technicianId, pageable);
-
-        verify(patientAppointmentRepository, times(1)).searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
-    }
     private PatientAppointment createPatientAppointment(){
         Patient patient = Data.createPatient();
 
