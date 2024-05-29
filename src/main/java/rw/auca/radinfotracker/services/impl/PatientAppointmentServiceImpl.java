@@ -98,7 +98,7 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         UserAccount technician = userService.getById(technicianId);
         if(!technician.getRole().equals(ERole.TECHNICIAN)) throw new BadRequestException("exceptions.badRequest.appointment.invalidTechnician");
 
-        return patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist, technician, pageable);
+        return patientAppointmentRepository.searchAllByDate(status, paymentStatus, date, radiologist.getId(), technician.getId(), pageable);
     }
 
     @Override
@@ -106,10 +106,10 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
         UserAccount user = userService.getLoggedInUser();
 
         if(user.getRole().equals(ERole.RADIOLOGIST)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.QUALITY_CHECKED, null, date, user, null, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.QUALITY_CHECKED, null, date, user.getId(), null, pageable);
         }
         else if(user.getRole().equals(ERole.TECHNICIAN)){
-            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.PENDING, null, date, null, user, pageable);
+            return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.PENDING, null, date, null, user.getId(), pageable);
         }
         else if(user.getRole().equals(ERole.QUALITY_ASSURANCE)){
             return patientAppointmentRepository.searchAllByDate(EAppointmentStatus.ATTENDED, null, date, null, null, pageable);

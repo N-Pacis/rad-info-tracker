@@ -21,9 +21,9 @@ public interface IPatientAppointmentRepository extends JpaRepository<PatientAppo
             "(:status IS NULL OR pa.status=:status) AND " +
             "(:paymentStatus IS NULL OR pa.paymentStatus=:paymentStatus) AND " +
             "(:date IS NULL or pa.date=:date) AND" +
-            "(:technician IS NULL or pa.technician=:technician) AND" +
-            "(:radiologist IS NULL or pa.radiologist=:radiologist)")
-    Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UserAccount radiologist, UserAccount technician, Pageable pageable);
+            "(:technician IS NULL or pa.technician.id=:technician) AND" +
+            "(:radiologist IS NULL or pa.radiologist.id=:radiologist)")
+    Page<PatientAppointment> searchAllByDate(EAppointmentStatus status, EPaymentStatus paymentStatus, LocalDate date, UUID radiologist, UUID technician, Pageable pageable);
     
     Optional<PatientAppointment> findByRefNumber(String refNumber);
 }
