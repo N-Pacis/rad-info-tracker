@@ -17,4 +17,5 @@ VOLUME /opt/radInfoTracker/files
 
 EXPOSE 8080
 
+
 ENTRYPOINT ["java", "-jar", "radInfoTracker-1.0.0.jar"]
