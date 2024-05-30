@@ -59,6 +59,8 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
     @Override
     public PatientAppointment create(NewPatientAppointmentDTO dto) throws ResourceNotFoundException, BadRequestException {
+        if(LocalDate.now().isAfter(dto.getDate())) throw new BadRequestException("exceptions.badRequest.appointment.invalidDate");
+
         Patient patient = patientService.getById(dto.getPatientId());
 
         UserAccount radiologist = userService.getById(dto.getRadiologistId());
@@ -71,7 +73,6 @@ public class PatientAppointmentServiceImpl implements IPatientAppointmentService
 
         ImageType imageType = imageTypeService.getById(dto.getImageTypeId());
 
-        if(LocalDate.now().isAfter(dto.getDate())) throw new BadRequestException("exceptions.badRequest.appointment.invalidDate");
 
         String refNumber = "APT-" + RandomUtil.randomNumber();
 
